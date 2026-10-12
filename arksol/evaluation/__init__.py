@@ -6,6 +6,7 @@
 """
 
 from arksol.evaluation.cases import Case, default_cases_path, load_cases, split_by_followup
+from arksol.evaluation.rebuild import load_raw, rebuild_report, recompute_derived
 from arksol.evaluation.report import render_report
 from arksol.evaluation.runner import (
     FAULT_SCENARIOS,
@@ -27,6 +28,9 @@ __all__ = [
     "PipelineSummary",
     "default_cases_path",
     "load_cases",
+    "load_raw",
+    "rebuild_report",
+    "recompute_derived",
     "render_report",
     "run_fault_experiment",
     "run_matrix",

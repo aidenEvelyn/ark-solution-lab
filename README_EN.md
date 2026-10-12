@@ -9,36 +9,58 @@
 
 ## Headline result
 
-Three pipelines, the same 20 customer requirements, one yardstick:
+### Real model (`deepseek-v4.1-flash`, 8 cases)
 
-| Pipeline | Avg. calls | Avg. tokens | Unsupported-claim rate |
-|---|---|---|---|
-| `no-evidence` — answer from memory, no retrieval | 1.7 | 845 | **100%** (42/42) |
-| `evidence-once` — retrieve once, write once | 1.7 | 1,499 | **0%** |
-| `multi` — parallel read-only research + single-threaded writing + independent review | **4.5** | **4,585** | **0%** |
+| Pipeline | Success | Unsupported-claim rate | Constraint coverage | Avg. calls | Avg. tokens | Avg. latency |
+|---|---|---|---|---|---|---|
+| `no-evidence` — answer from memory | 100% | **100%** (50/50) | 90% | 2.0 | 3,280 | 13.1 s |
+| `evidence-once` — retrieve once | 100% | **0%** (0/80) | 100% | 2.0 | 4,468 | 15.1 s |
+| `multi` — parallel research + review | 88% | 4% (3/81) | 100% | **8.1** | **23,831** | **50.6 s** |
 
-**Three findings:**
+**Four findings** (full report: [`results/ark/report.md`](results/ark/report.md)):
 
 1. **Retrieval, not orchestration, is what stops fabrication.** Adding evidence drops the
    unsupported-claim rate from 100% to 0% — at *zero* extra calls.
-2. **On the happy path, multi-agent costs 3.1× more tokens and buys nothing.**
-   This matches Anthropic's and Cognition's published engineering post-mortems: orchestration
-   does not produce correctness; it only pays off on the **failure path**.
-3. **On the failure path it earns its keep — but review is not omnipotent.** Same injected fault,
-   two pipelines:
+2. **On the happy path, multi-agent costs 5.3× the tokens and 3.3× the latency, and is
+   strictly worse on quality** (0% → 4% unsupported). This matches Anthropic's and Cognition's
+   engineering post-mortems: orchestration does not produce correctness.
+3. **The independent reviewer rejected 6 of 7 runs.** The reasons were consistent: the issues
+   came from *missing customer information* (no volume, no accuracy target, no compliance
+   answer), not from poor writing. Rewriting cannot fix that — only asking can.
+4. **Infrastructure failures are a real cost of real runs.** One case failed on a network flake
+   (`Errno 2`). The report lists it instead of quietly dropping it.
+
+Same injected faults, two pipelines:
 
 | Injected fault | `evidence-once` leaked | `multi` leaked |
 |---|---|---|
-| Fabricated citation (transient) | **6/6** | **0/6** — caught and rewritten |
-| Constraint ignored (persistent) | 6/6 | **6/6** — detected, but unfixable |
-| Invalid JSON (transient) | 0/6 | 0/6 — absorbed by local retry, no orchestration needed |
+| Fabricated citation (transient) | **2/2** | **0/2** — caught and rewritten |
+| Constraint ignored (persistent) | 2/2 | **2/2** — detected, but unfixable |
+| Invalid JSON (transient) | 0/2 | 0/2 — absorbed by local retry |
 
-> ⚠️ **Read the scope before the numbers.** The run above used `mock`, a deterministic
-> rule script — **not a model**. Call counts, tokens, cost, contract compliance, retries and
-> fault-interception rates are valid (they depend only on pipeline structure).
-> **Unsupported-claim rate and constraint coverage reflect the script's settings, not model
-> behaviour.** The 20 cases are hand-written, not a benchmark. Full scope and falsification
-> conditions: [`docs/EVALUATION.md`](docs/EVALUATION.md).
+> ⚠️ **Scope**: 8 hand-written cases, a single run, **not a benchmark**. Costs are estimates
+> (0 when no price is configured) — **not a bill**. Constraint coverage uses keyword matching
+> as a proxy. Full metric definitions and 5 falsification conditions:
+> [`docs/EVALUATION.md`](docs/EVALUATION.md).
+
+### Offline, reproducible (`mock` provider, 20 cases)
+
+`mock` is not a model — it is a deterministic rule script for exercising pipeline mechanics at
+zero cost:
+
+| Pipeline | Avg. calls | Avg. tokens | Unsupported-claim rate | Coverage |
+|---|---|---|---|---|
+| `no-evidence` | 1.7 | 845 | **100%** (42/42) | 100% |
+| `evidence-once` | 1.7 | 1,499 | **0%** | 100% |
+| `multi` | **4.5** | **4,585** | **0%** | 100% |
+
+Fault injection: fabricated citation **6/6 → 0/6** ｜ ignored constraint **6/6 → 6/6** ｜
+invalid JSON **0/6 → 0/6**.
+
+**How to read these**: call counts, tokens, cost, contract compliance, retries, breakers and
+fault-interception rates are **valid** (they depend only on pipeline structure). The
+unsupported-claim rate, constraint coverage and follow-up hit rate under `mock` reflect the
+**script's settings, not model behaviour**. Report: [`results/report.md`](results/report.md).
 
 ---
 

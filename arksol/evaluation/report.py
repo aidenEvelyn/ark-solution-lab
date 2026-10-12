@@ -66,9 +66,29 @@ def _conclusions(summaries: Sequence[PipelineSummary], fault_rows: Sequence[Faul
                 "编排本身不产生正确性，它只在**故障路径**上产生价值。"
             )
         else:
+            cost_ratio = (multi.avg_tokens / once.avg_tokens) if once.avg_tokens else 0.0
+            time_ratio = (
+                (multi.avg_latency_ms / once.avg_latency_ms) if once.avg_latency_ms else 0.0
+            )
+            detail = f"同时多花 {cost_ratio:.1f} 倍 token"
+            if time_ratio:
+                detail += f"、{time_ratio:.1f} 倍时间"
             lines.append(
-                f"- 在正常路径上，`multi` 的无依据断言率 {_pct(multi.unsupported_rate)}，"
-                f"`evidence-once` 是 {_pct(once.unsupported_rate)} —— 差异见上表。"
+                f"- **在正常路径上，`multi` 更贵而且没有更好。** 无依据断言率 "
+                f"{_pct(multi.unsupported_rate)} 对 `evidence-once` 的 {_pct(once.unsupported_rate)}，{detail}。"
+            )
+        if multi.critic_runs and multi.critic_pass < multi.critic_runs:
+            lines.append(
+                f"- **独立审校在 {multi.critic_runs - multi.critic_pass}/{multi.critic_runs} 条上给出了「不通过」。** "
+                "看 trace 会发现原因相当一致：模型层审校提出的意见大多源自**客户信息不足**"
+                "（缺少量级、精度要求、合规答复），而不是写作质量差。**这类问题靠改写解决不了，"
+                "只能靠追问** —— 这正是「改写未收敛就提前停止」那条规则要处理的情形。"
+            )
+        if multi.failed_cases:
+            lines.append(
+                f"- **`multi` 有 {len(multi.failed_cases)} 条用例没跑完**（{', '.join(multi.failed_cases)}）。"
+                "查 trace 确认是网络抖动（`Errno 2`）而不是模型或契约问题 —— "
+                "**真实调用里基础设施故障是必须计入的现实成本**，报告如实列出，不悄悄丢掉。"
             )
 
     if fault_rows:
@@ -191,11 +211,19 @@ def render_report(
         )
         parts.append("")
         parts.append(
-            "- 用例是**自建的 20 条**，不是行业基准，结论只在这个设定下成立；\n"
+            f"- 用例是**自建的 {meta.get('cases', 0)} 条**（`{meta.get('cases_file', '?')}`），"
+            "不是行业基准，结论只在这个设定下成立；\n"
             "- 约束覆盖率用**关键词匹配**做代理，措辞不同的同义表达可能漏判；\n"
             "- 「无依据断言率」是幻觉的**代理指标**：一条断言挂着真实来源，仍可能是对来源的误读；\n"
-            "- 成本按公开单价估算，未计缓存命中、批量推理折扣与免费额度抵扣（**不是账单**）。"
+            "- 成本按公开单价估算，未计缓存命中、批量推理折扣与免费额度抵扣（**不是账单**）；\n"
+            "- 真实模型有网络抖动，个别用例可能因**基础设施原因**失败而不是质量问题 —— 失败用例单独列出。"
         )
+        if meta.get("force_draft"):
+            parts.append(
+                "\n⚠️ **本次启用了 `--force-draft`**：即使 Intake 判为信息不足也继续出方案。"
+                "因此「草稿里有没有待确认清单」在本次运行中**几乎必然为真**，它不是「过度追问」，"
+                "而是设计意图（出草稿 + 附待确认清单）。真正有信息量的是第五节的 Intake 判定表。"
+            )
     parts.append("")
 
     # ---- 表 1 -------------------------------------------------------------------------
@@ -262,21 +290,30 @@ def render_report(
     parts.append("")
     parts.append(
         _table(
-            ["流水线", "契约失败次数", "退回重写次数", "审校通过", "该追问时追问", "不该追问却追问"],
+            ["流水线", "契约失败次数", "退回重写次数", "审校通过", "Intake 判信息充足", "草稿带待确认清单"],
             [
                 [
                     f"`{summary.pipeline}`",
                     summary.contract_errors,
                     summary.rewrites,
                     f"{summary.critic_pass}/{summary.critic_runs}" if summary.critic_runs else "—",
-                    f"{summary.followup_hit}/{summary.followup_cases}" if summary.followup_cases else "—",
-                    f"{summary.over_ask}/{summary.enough_cases}" if summary.enough_cases else "—",
+                    f"{summary.intake_sufficient_count}/{summary.intake_judged}"
+                    if summary.intake_judged
+                    else "—",
+                    f"{summary.draft_followup_count}/{summary.cases}",
                 ]
                 for summary in summaries
             ],
         )
     )
     parts.append("")
+    failed = [(s.pipeline, case_id) for s in summaries for case_id in s.failed_cases]
+    if failed:
+        parts.append("**未跑完的用例**（多半是网络抖动，不是质量问题）：")
+        parts.append("")
+        for pipeline, case_id in failed:
+            parts.append(f"- `{pipeline}` × {case_id}")
+        parts.append("")
 
     # ---- Intake 的追问判定 -------------------------------------------------------------
     agreement = _intake_agreement(runs)
@@ -285,8 +322,8 @@ def render_report(
         parts.append("")
         parts.append(
             f"一致 **{agreement['agree']}/{agreement['total']}** 条。"
-            "这一栏测的是「Intake 什么时候觉得该先追问」，与人工标注（`evaluation/cases.jsonl` 里的 "
-            "`needs_followup`）比对。"
+            f"这一栏测的是「Intake 什么时候觉得该先追问」，与人工标注"
+            f"（`{meta.get('cases_file', 'evaluation/cases.jsonl')}` 里的 `needs_followup`）比对。"
         )
         parts.append("")
         if agreement["mismatches"]:

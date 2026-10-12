@@ -20,6 +20,7 @@ from arksol.errors import ArksolError, ProviderError
 from arksol.evaluation import (
     default_cases_path,
     load_cases,
+    rebuild_report,
     render_report,
     run_fault_experiment,
     run_matrix,
@@ -83,6 +84,10 @@ def build_parser() -> argparse.ArgumentParser:
         default=4,
         help="故障注入实验用前几条用例（默认 4；结论是结构性的，与用例条数无关）",
     )
+
+    rep = sub.add_parser("report", help="从 raw.json 重新渲染报告（不必重跑模型）")
+    rep.add_argument("--raw", default="results/raw.json")
+    rep.add_argument("--out", default=None, help="输出路径；缺省写到 raw.json 同目录的 report.md")
 
     return parser
 
@@ -315,6 +320,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             return _cmd_demo(args)
         if args.command == "eval":
             return _cmd_eval(args)
+        if args.command == "report":
+            target = rebuild_report(args.raw, args.out)
+            print(f"[arksol] 报告已重新渲染：{target}")
+            return 0
         return _cmd_run(args)
     except ProviderError as exc:
         print(f"[arksol] 模型提供方错误：{exc}", file=sys.stderr)

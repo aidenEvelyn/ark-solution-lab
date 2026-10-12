@@ -17,6 +17,9 @@ from arksol.errors import ArksolError
 from arksol.evaluation import (
     FAULT_SCENARIOS,
     load_cases,
+    load_raw,
+    rebuild_report,
+    recompute_derived,
     render_report,
     run_fault_experiment,
     run_matrix,
@@ -254,6 +257,89 @@ class TestOutputWriters(unittest.TestCase):
 
             payload = json.loads((out / "raw.json").read_text(encoding="utf-8"))
             self.assertEqual(len(payload["summaries"]), 1)
+
+
+class TestReportRebuild(unittest.TestCase):
+    """报告必须是「可重算的视图」，而不是跑完就散掉的输出。
+
+    真实模型的评测很贵，改一次措辞不该重跑全量。只要 raw.json 留着原始记录，
+    报告就应该能随时重渲染，而且派生指标要能从逐条记录重算出来。
+    """
+
+    SUFFICIENT = "我们想做个内部知识库问答，给客服团队用，但数据不能出内网，QPS 大概 50，预算每月两千左右。"
+    VAGUE = "想做个 AI 的东西"
+
+    def _fixture(self, tmp: Path) -> Path:
+        from arksol.evaluation.cases import Case
+
+        cases = [Case(id="T1", input=self.SUFFICIENT), Case(id="T2", input=self.VAGUE, needs_followup=True)]
+        runs, summaries = run_matrix(cases, ["no-evidence", "multi"], MockProvider, trace_dir=tmp / "traces")
+        raw = tmp / "raw.json"
+        write_raw(
+            raw,
+            {
+                "meta": {
+                    "generated_at": "2026-10-12T00:00:00+08:00",
+                    "provider": "mock",
+                    "model": "mock-deterministic-v1",
+                    "cases": 2,
+                    "pipelines": ["no-evidence", "multi"],
+                    "cases_file": "evaluation/cases.jsonl",
+                },
+                "summaries": [s.to_dict() for s in summaries],
+                "runs": [r.to_dict() for r in runs],
+                "fault_rows": [],
+            },
+        )
+        return raw
+
+    def test_rebuild_writes_report(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            raw = self._fixture(Path(tmp))
+            target = rebuild_report(raw)
+            text = Path(target).read_text(encoding="utf-8")
+        self.assertIn("# 对照实验结果", text)
+        self.assertIn("no-evidence", text)
+
+    def test_missing_derived_fields_are_recomputed_from_runs(self) -> None:
+        # 模拟「raw.json 是更早版本生成的」：删掉后来才加的字段
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            raw = self._fixture(base)
+            payload = json.loads(raw.read_text(encoding="utf-8"))
+            for summary in payload["summaries"]:
+                summary.pop("draft_followup_count", None)
+                summary.pop("failed_cases", None)
+            raw.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+            _meta, summaries, runs, _faults = load_raw(raw)
+            recompute_derived(summaries, runs)
+            text = rebuild_report(raw)
+            rendered = Path(text).read_text(encoding="utf-8")
+
+        # 每条流水线各 2 条用例，其中 1 条该追问 → 重算后必须是 1/2，而不是默认的 0/2
+        per_pipeline: dict[str, int] = {}
+        for run in runs:
+            key = run.pipeline
+            per_pipeline[key] = per_pipeline.get(key, 0) + (
+                1 if (run.metrics or {}).get("followup_asked") else 0
+            )
+        self.assertEqual(set(per_pipeline.values()), {1})
+        self.assertIn("1/2", rendered)
+
+    def test_load_raw_returns_typed_objects(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            raw = self._fixture(Path(tmp))
+            meta, summaries, runs, faults = load_raw(raw)
+        self.assertEqual(meta["provider"], "mock")
+        self.assertEqual(len(summaries), 2)
+        self.assertEqual(len(runs), 4)
+        self.assertEqual(faults, [])
+        self.assertTrue(all(hasattr(run, "case_id") for run in runs))
+
+    def test_missing_raw_raises(self) -> None:
+        with self.assertRaises(ArksolError):
+            load_raw(Path("不存在的目录") / "raw.json")
 
 
 class TestFaultScenarioCatalogue(unittest.TestCase):

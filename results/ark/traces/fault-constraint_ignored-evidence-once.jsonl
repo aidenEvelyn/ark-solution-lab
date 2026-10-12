@@ -1,0 +1,8 @@
+{"ts": "2026-10-12T11:01:51.239+08:00", "run_id": "C01", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 1063, "completion_tokens": 130}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.239+08:00", "run_id": "C01", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.241+08:00", "run_id": "C01", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": "constraint_ignored", "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1863, "completion_tokens": 90}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.241+08:00", "run_id": "C01", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.247+08:00", "run_id": "C02", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 1063, "completion_tokens": 134}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.247+08:00", "run_id": "C02", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.249+08:00", "run_id": "C02", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": "constraint_ignored", "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1867, "completion_tokens": 90}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.249+08:00", "run_id": "C02", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}

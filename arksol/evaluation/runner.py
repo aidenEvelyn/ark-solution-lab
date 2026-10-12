@@ -80,6 +80,8 @@ class PipelineSummary:
     critic_pass: int = 0
     intake_judged: int = 0
     intake_sufficient_count: int = 0
+    draft_followup_count: int = 0
+    failed_cases: List[str] = field(default_factory=list)
 
     # -- 派生指标 -----------------------------------------------------------------------
 
@@ -237,12 +239,15 @@ def run_matrix(
             summary.rewrites += max(0, record.rounds - 1)
 
             asked = bool(metrics.get("followup_asked"))
+            summary.draft_followup_count += 1 if asked else 0
             if case.needs_followup:
                 summary.followup_cases += 1
                 summary.followup_hit += 1 if asked else 0
             else:
                 summary.enough_cases += 1
                 summary.over_ask += 1 if asked else 0
+            if not record.ok:
+                summary.failed_cases.append(case.id)
 
             intake = metrics.get("intake_sufficient")
             if intake is not None:

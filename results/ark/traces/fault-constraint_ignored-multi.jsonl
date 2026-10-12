@@ -1,0 +1,28 @@
+{"ts": "2026-10-12T11:01:51.254+08:00", "run_id": "C01", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 1063, "completion_tokens": 130}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.254+08:00", "run_id": "C01", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.256+08:00", "run_id": "C01", "agent": "evidence:模型选型", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "EvidenceBundle"}, "usage": {"prompt_tokens": 1173, "completion_tokens": 202}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.256+08:00", "run_id": "C01", "agent": "evidence:模型选型", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.258+08:00", "run_id": "C01", "agent": "evidence:限制与合规", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "EvidenceBundle"}, "usage": {"prompt_tokens": 1292, "completion_tokens": 216}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.258+08:00", "run_id": "C01", "agent": "evidence:限制与合规", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.259+08:00", "run_id": "C01", "agent": "evidence:计费与性能", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "EvidenceBundle"}, "usage": {"prompt_tokens": 1227, "completion_tokens": 216}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.259+08:00", "run_id": "C01", "agent": "evidence:计费与性能", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.261+08:00", "run_id": "C01", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": "constraint_ignored", "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1737, "completion_tokens": 90}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.261+08:00", "run_id": "C01", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.261+08:00", "run_id": "C01", "agent": "critic", "event": "rule_reject", "level": "warn", "payload": {"issues": ["uncovered_constraint", "uncovered_constraint"]}}
+{"ts": "2026-10-12T11:01:51.263+08:00", "run_id": "C01", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": "constraint_ignored", "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1815, "completion_tokens": 90}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.263+08:00", "run_id": "C01", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.263+08:00", "run_id": "C01", "agent": "critic", "event": "rule_reject", "level": "warn", "payload": {"issues": ["uncovered_constraint", "uncovered_constraint"]}}
+{"ts": "2026-10-12T11:01:51.269+08:00", "run_id": "C02", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 1063, "completion_tokens": 134}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.269+08:00", "run_id": "C02", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.270+08:00", "run_id": "C02", "agent": "evidence:模型选型", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "EvidenceBundle"}, "usage": {"prompt_tokens": 1173, "completion_tokens": 202}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.271+08:00", "run_id": "C02", "agent": "evidence:模型选型", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.272+08:00", "run_id": "C02", "agent": "evidence:限制与合规", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "EvidenceBundle"}, "usage": {"prompt_tokens": 1292, "completion_tokens": 216}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.273+08:00", "run_id": "C02", "agent": "evidence:计费与性能", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "EvidenceBundle"}, "usage": {"prompt_tokens": 1227, "completion_tokens": 216}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.273+08:00", "run_id": "C02", "agent": "evidence:限制与合规", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.273+08:00", "run_id": "C02", "agent": "evidence:计费与性能", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.275+08:00", "run_id": "C02", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": "constraint_ignored", "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1741, "completion_tokens": 90}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.275+08:00", "run_id": "C02", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.275+08:00", "run_id": "C02", "agent": "critic", "event": "rule_reject", "level": "warn", "payload": {"issues": ["uncovered_constraint"]}}
+{"ts": "2026-10-12T11:01:51.276+08:00", "run_id": "C02", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": "constraint_ignored", "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1783, "completion_tokens": 90}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T11:01:51.276+08:00", "run_id": "C02", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T11:01:51.277+08:00", "run_id": "C02", "agent": "critic", "event": "rule_reject", "level": "warn", "payload": {"issues": ["uncovered_constraint"]}}
