@@ -264,9 +264,11 @@ def _cmd_eval(args: argparse.Namespace) -> int:
         "pipelines": pipelines,
         "fault_pipelines": fault_pipelines,
         "force_draft": bool(args.force_draft),
+        "cases_file": str(cases_path),
         "command": (
             f"python -m arksol eval --provider {args.provider}"
-            f"{' --force-draft' if args.force_draft else ''} --out {args.out}"
+            f"{' --force-draft' if args.force_draft else ''}"
+            f" --cases {cases_path} --fault-limit {args.fault_limit} --out {args.out}"
         ),
         "kb": kb_stats,
     }

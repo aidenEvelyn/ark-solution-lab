@@ -145,6 +145,7 @@ def render_report(
     )
     parts.append(
         f"> 用例：{meta.get('cases', 0)} 条（其中 {meta.get('underspecified_cases', 0)} 条为欠规格）"
+        f" ｜ 用例文件：`{meta.get('cases_file', 'evaluation/cases.jsonl')}`"
         f" ｜ 流水线：{', '.join(f'`{name}`' for name in meta.get('pipelines', []))}"
     )
     parts.append(f"> 复现：`{meta.get('command', 'python -m arksol eval --provider mock')}`")
