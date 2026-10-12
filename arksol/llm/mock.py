@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Union
 
@@ -293,11 +294,6 @@ def _h_writer(request: LLMRequest) -> str:
     return _dump(_writer_payload(request.context))
 
 
-@handler("single_guarded")
-def _h_single_guarded(request: LLMRequest) -> str:
-    return _dump(_writer_payload(request.context))
-
-
 @handler("single")
 def _h_single(request: LLMRequest) -> str:
     """基线 A：一次调用、不看知识库 —— 断言只能标 EV-NONE。"""
@@ -373,6 +369,8 @@ class MockProvider(Provider):
         if handlers:
             self._handlers.update(handlers)
         self._calls: Dict[str, int] = {}
+        # 取证环节是多线程调用的，计数器必须加锁，否则故障注入的 at_call 会飘
+        self._lock = threading.Lock()
 
     @property
     def call_counts(self) -> Dict[str, int]:
@@ -384,8 +382,9 @@ class MockProvider(Provider):
 
     def complete(self, request: LLMRequest) -> LLMResponse:
         tag = request.tag or "default"
-        self._calls[tag] = self._calls.get(tag, 0) + 1
-        call_index = self._calls[tag]
+        with self._lock:
+            self._calls[tag] = self._calls.get(tag, 0) + 1
+            call_index = self._calls[tag]
 
         fn = self._handlers.get(tag)
         # 未知 tag 返回一个合法但不符合任何契约的空对象 —— 让契约层去报错，

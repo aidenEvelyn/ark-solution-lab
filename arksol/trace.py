@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 import time
 import uuid
 from datetime import datetime
@@ -26,6 +27,8 @@ class Tracer:
         self.run_id = run_id or uuid.uuid4().hex[:12]
         self.path: Optional[Path] = Path(path) if path is not None else None
         self._fh = None
+        # 取证环节是真的多线程：不加锁会出现两行 JSON 交错写成一行的情况
+        self._lock = threading.Lock()
         if self.path is not None:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             self._fh = open(self.path, "a", encoding="utf-8", newline="\n")
@@ -57,8 +60,9 @@ class Tracer:
             record["elapsed_ms"] = round(elapsed_ms, 1)
 
         if self._fh is not None:
-            self._fh.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
-            self._fh.flush()
+            with self._lock:
+                self._fh.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
+                self._fh.flush()
         return record
 
     def span(self, *, agent: str, event: str = "call", payload: Optional[Any] = None):
@@ -68,9 +72,10 @@ class Tracer:
     # -- 生命周期 -----------------------------------------------------------------------
 
     def close(self) -> None:
-        if self._fh is not None:
-            self._fh.close()
-            self._fh = None
+        with self._lock:
+            if self._fh is not None:
+                self._fh.close()
+                self._fh = None
 
     def __enter__(self) -> "Tracer":
         return self
