@@ -1,0 +1,128 @@
+{
+  "entries": [
+    {
+      "id": "model.doubao-seed-2-1-turbo",
+      "kind": "model",
+      "title": "Doubao-Seed-2.1-Turbo（轻量旗舰）",
+      "tags": ["模型选型", "轻量", "性价比", "256k上下文"],
+      "text": "豆包 Seed 2.1 Turbo，官方定位为轻量旗舰，称效果比肩同代 Pro。上下文 256k 量级，限流约 RPM 500 / TPM 1M。单价（二手转述官方价格页）：输入约 3 元/百万 tokens、输出约 15 元/百万 tokens。适用：对成本与延迟敏感、又需要较长上下文的场景。注意：单价会变，报价前必须回官方价格页核对。",
+      "facts": {
+        "tier": "轻量旗舰",
+        "context_window_tokens": 262144,
+        "rpm": 500,
+        "tpm": 1000000,
+        "price_in_cny_per_mtok": 3.0,
+        "price_out_cny_per_mtok": 15.0,
+        "price_confidence": "低",
+        "price_note": "来自二手报道转述官方价格页（S08），非官方页直读"
+      },
+      "sources": ["S01", "S08"]
+    },
+    {
+      "id": "model.doubao-seed-2-1-pro",
+      "kind": "model",
+      "title": "Doubao-Seed-2.1-Pro（旗舰）",
+      "tags": ["模型选型", "旗舰", "256k上下文", "复杂推理"],
+      "text": "豆包 Seed 2.1 Pro 系列，官方定位旗舰。上下文、单次输入、最大回答、思维链均为 256k 量级；限流约 RPM 500 / TPM 1M。单价：本知识库只查到上一版（260628）的转述数字，输入约 6 元/百万 tokens、输出约 30 元/百万 tokens；**新版 260915 本身的单价未查到**，因此报价时只能作为量级参考。适用：方案类、需要较强推理与长输出的任务。",
+      "facts": {
+        "tier": "旗舰",
+        "context_window_tokens": 262144,
+        "max_output_tokens": 262144,
+        "rpm": 500,
+        "tpm": 1000000,
+        "price_in_cny_per_mtok": 6.0,
+        "price_out_cny_per_mtok": 30.0,
+        "price_confidence": "低",
+        "price_note": "上一版本号（260628）的转述价格，非当前版本；未查到 260915 的官方单价"
+      },
+      "sources": ["S01", "S08", "S09"]
+    },
+    {
+      "id": "model.doubao-seed-evolving",
+      "kind": "model",
+      "title": "Doubao-Seed-Evolving（旗舰 · 超长上下文）",
+      "tags": ["模型选型", "旗舰", "1M上下文", "周级迭代"],
+      "text": "官方称旗舰、周级迭代。上下文 1024k，最大回答 256k（默认 4k），思维链 256k；限流约 RPM 500 / TPM 1M。适用：需要把大量文档一次性放进上下文的场景（整库问答、长报告审阅）。成本需特别注意：超长输入会显著抬高单次费用，且多数豆包模型按输入长度分段计价。",
+      "facts": {
+        "tier": "旗舰",
+        "context_window_tokens": 1048576,
+        "max_output_tokens": 262144,
+        "rpm": 500,
+        "tpm": 1000000
+      },
+      "sources": ["S01"]
+    },
+    {
+      "id": "model.deepseek-v4-1-flash",
+      "kind": "model",
+      "title": "DeepSeek-V4.1-Flash（平台第三方模型）",
+      "tags": ["模型选型", "第三方模型", "1M上下文"],
+      "text": "方舟平台上架的第三方模型，上下文 1024k 量级。这类条目的意义在于回答客户一个常见问题：「能不能不只用一个厂家的模型」。多模型可选对客户是议价与兜底手段，但也意味着评测口径、计费口径、错误码口径都要分开维护。",
+      "facts": {
+        "tier": "第三方 · 长上下文",
+        "context_window_tokens": 1048576
+      },
+      "sources": ["S01"]
+    },
+    {
+      "id": "guide.endpoint-vs-model-id",
+      "kind": "model",
+      "title": "推理接入点（ep-）还是 Model ID？——一个常被问到的历史包袱",
+      "tags": ["接入方式", "常见问题", "404", "过时写法"],
+      "text": "早期使用方舟必须先在控制台创建「推理接入点」，调用时把 model 填成 ep-xxxxxxxx。官方《推理方式概述》（2026-09-14）已明确：新用户或快速验证**直接填 Model ID 即可**，方舟会自动匹配预置推理服务，不存在则自动创建。自定义 ep- 接入点仍然有用，但用途变了 —— 主要用于按接入点维度看限流、监控和账单。旧教程里的 model=\"${YOUR_ENDPOINT_ID}\" 属于过时写法，照抄会报 404。",
+      "facts": {
+        "since": "2026-09-14",
+        "recommended": "model 直接填 Model ID"
+      },
+      "sources": ["S02"]
+    },
+    {
+      "id": "guide.base-url-and-auth",
+      "kind": "model",
+      "title": "Base URL 与鉴权（最常见的 404 来源）",
+      "tags": ["接入方式", "鉴权", "404", "OpenAI兼容"],
+      "text": "数据面 Base URL 是 https://ark.cn-beijing.volces.com/api/v3 —— 它**已经包含 /api/v3**。用 OpenAI SDK 接入时，base_url 填这个值，路径里**不要再加 /v1**，这是最常见的 404 来源。鉴权方式：请求头 Authorization: Bearer $ARK_API_KEY。另有两个容易混淆的地址：Coding/Agent Plan 走 /api/coding/v3；管控面（开通、查账单等）是另一个域名且使用 AK/SK 签名，不是 API Key。",
+      "facts": {
+        "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+        "auth_header": "Authorization: Bearer $ARK_API_KEY"
+      },
+      "sources": ["S07", "S04"]
+    },
+    {
+      "id": "guide.function-calling",
+      "kind": "model",
+      "title": "Function Calling / 工具调用支持情况",
+      "tags": ["工具调用", "能力边界"],
+      "text": "方舟 Chat API 支持 tools、tool_choice 与并行工具调用；Responses API 侧另有工具调用文档。这条知识用于回答客户「模型能不能调我们自己的接口」这类能力问题。需要注意：**支持工具调用 ≠ 应该用工具调用**——把不该交给模型的动作交出去，是 agent 类项目最常见的风险来源。",
+      "facts": {
+        "supported": true,
+        "params": ["tools", "tool_choice"]
+      },
+      "sources": ["S03", "S04"]
+    },
+    {
+      "id": "guide.free-quota",
+      "kind": "model",
+      "title": "新用户免费额度与「安心体验模式」",
+      "tags": ["计费", "免费额度", "试用"],
+      "text": "新用户有 50 万 tokens 的免费额度，走「安心体验模式」，仅限**未开通过模型服务**的新用户；按模型分别计算、主账号共享；接近额度会自动暂停。可抵扣在线推理的输入/输出与缓存命中 token，但**不可抵扣**插件、知识库、批量推理（Batch）与缓存存储费用。给客户做 PoC 报价时要把这条讲清楚：免费额度不等于能力上限。",
+      "facts": {
+        "free_tokens": 500000,
+        "eligibility": "未开通过模型服务的新用户"
+      },
+      "sources": ["S06"]
+    },
+    {
+      "id": "guide.pricing-model",
+      "kind": "model",
+      "title": "计费口径：按 token 后付费 + 输入长度分段",
+      "tags": ["计费", "成本估算", "报价"],
+      "text": "按 token 后付费，分推理输入（prompt_token）与推理输出（completion_token）两项；开启上下文缓存后另加缓存命中（cached_token，单价更低）与缓存存储两项费用。**多数豆包模型按输入长度分段计价**：同一次请求的输入与输出都按所落区间计价，这意味着「把上下文从 30k 拉到 130k」可能不是线性涨价，而是跨档涨价。逐档单价表本知识库未能核对到，**对外报价必须在控制台按当次价格核对**。",
+      "facts": {
+        "billing": "按 token 后付费",
+        "segmented_by_input_length": true
+      },
+      "sources": ["S05", "S09"]
+    }
+  ]
+}

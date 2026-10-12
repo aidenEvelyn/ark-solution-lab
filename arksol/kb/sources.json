@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "registry_version": 1,
+    "updated": "2026-10-12",
+    "read_at_all": "2026-10-12",
+    "disclaimer": "本表登记的是知识库里每一条事实的来源。火山方舟官方文档站（docs.volcengine.com）为 JS 动态渲染，抓取正文受限，因此部分条目的可信度标为「中」或「低」——引用前请回原页核对。接真实业务前必须重新验证。",
+    "confidence_legend": {
+      "高": "官方页面可直接读到的原文，或经镜像页逐字核对",
+      "中": "来自搜索引擎对官方页面的渲染快照 / 官方另一版本页面的转述",
+      "低": "二手媒体报道或转述，未在官方页面核对"
+    }
+  },
+  "sources": {
+    "S01": {
+      "title": "火山方舟 · 模型列表（含上下文窗口、RPM/TPM、模型 ID）",
+      "url": "https://docs.volcengine.com/docs/82379/1330310",
+      "read_at": "2026-10-12",
+      "confidence": "中",
+      "note": "页面标注最近更新 2026.09.28。正文经搜索渲染快照读取，非逐页核对；模型 ID 与窗口数字建议回控制台确认。"
+    },
+    "S02": {
+      "title": "火山方舟 · 推理方式概述（Model ID 与 Endpoint ID 的关系）",
+      "url": "https://docs.volcengine.com/docs/ark/deployment-overview?lang=zh",
+      "read_at": "2026-10-12",
+      "confidence": "高",
+      "note": "页面时间标注 2026-09-14。明确写「新用户/快速验证直接通过 Model ID 调用即可，方舟会自动匹配预置推理服务」。"
+    },
+    "S03": {
+      "title": "火山方舟 · Chat API（tools / tool_choice / 并行工具调用）",
+      "url": "https://docs.volcengine.com/docs/82379/1262342",
+      "read_at": "2026-10-12",
+      "confidence": "高",
+      "note": "页面时间标注 2026-08-05。"
+    },
+    "S04": {
+      "title": "火山方舟 · 错误码",
+      "url": "https://docs.volcengine.com/docs/82379/1299023",
+      "read_at": "2026-10-12",
+      "confidence": "高",
+      "note": "官方页动态渲染抓不到正文；错误码表经 apifox 镜像页逐字核对：https://doubao.apifox.cn/6107465m0（镜像标注修改于 2026-05-28，官方页标注 2026.08.18）。"
+    },
+    "S05": {
+      "title": "火山方舟 · 计费说明（按 token 后付费 / 缓存计费项）",
+      "url": "https://www.volcengine.com/docs/82379/1544681",
+      "read_at": "2026-10-12",
+      "confidence": "高",
+      "note": "计费项构成可读；逐档单价表未能核对。"
+    },
+    "S06": {
+      "title": "火山方舟 · 免费额度（新用户 50 万 tokens / 安心体验模式）",
+      "url": "https://www.volcengine.com/docs/82379/1159200",
+      "read_at": "2026-10-12",
+      "confidence": "高",
+      "note": "页面时间标注 2026.08.13。仅限未开通过模型服务的新用户。"
+    },
+    "S07": {
+      "title": "火山方舟 · Base URL 与鉴权",
+      "url": "https://docs.volcengine.com/docs/82379/1399008",
+      "read_at": "2026-10-12",
+      "confidence": "中",
+      "note": "快照标注 2026-08-13；同时参照控制台文档页 base-url-and-authentication。"
+    },
+    "S08": {
+      "title": "凤凰科技 · 豆包模型调价报道（转述官方文档单价）",
+      "url": "https://tech.ifeng.com/c/8uBalPRxcZq",
+      "read_at": "2026-10-12",
+      "confidence": "低",
+      "note": "2026-06-23 的二手报道，转述官方价格页。**单价属于会变的数字**，引用前必须回官方价格页核对。"
+    },
+    "S09": {
+      "title": "火山方舟 · 模型价格总表",
+      "url": "https://www.volcengine.com/docs/82379/1099320",
+      "read_at": "2026-10-12",
+      "confidence": "低",
+      "note": "页面 JS 动态渲染，仅拿到无法确定列含义的片段。本知识库**不引用**该页的具体数字，只登记它存在、以及需要人工核对这件事。"
+    },
+    "S90": {
+      "title": "本仓库 · docs/ARCHITECTURE.md（项目内方法论，非官方事实）",
+      "url": "docs/ARCHITECTURE.md",
+      "read_at": "2026-10-12",
+      "confidence": "中",
+      "note": "「方案模式」类条目是交付方法论，不是厂商事实。它引用的是本仓库自己的架构文档，因此单独登记、与厂商文档区分开。"
+    }
+  }
+}

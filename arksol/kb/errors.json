@@ -1,0 +1,146 @@
+{
+  "entries": [
+    {
+      "id": "err.auth.401",
+      "kind": "error",
+      "title": "401 AuthenticationError：密钥缺失或无效",
+      "tags": ["鉴权", "401", "排查"],
+      "text": "官方错误消息：The API key or AK/SK in the request is missing or invalid. 排查顺序：① 请求头是不是 Authorization: Bearer <key>（漏了 Bearer 前缀会直接失败）；② key 是否被复制时带了空格或换行；③ 是否把教程里的占位串（例如 no-key-required）当成真 key 发出去 —— 这是最高频的「格式不正确」来源；④ 环境变量是否真的加载进来了（在子进程/容器里常常没传）。",
+      "facts": {
+        "http_status": 401,
+        "error_code": "AuthenticationError",
+        "message_pattern": "The API key or AK/SK in the request is missing or invalid",
+        "category": "鉴权"
+      },
+      "sources": ["S04"]
+    },
+    {
+      "id": "err.model.404.not-found",
+      "kind": "error",
+      "title": "404 InvalidEndpoint.NotFound：目标接入点不存在或无效",
+      "tags": ["404", "模型接入", "排查"],
+      "text": "官方错误消息：The request targeted an endpoint that does not exist or is invalid. 两个高频根因：① Base URL 写错 —— 方舟的 base_url 已含 /api/v3，用 OpenAI SDK 时**再加一层 /v1** 就会 404；② 沿用了旧教程里 model 填 ep-xxxxxxxx 的写法，而那个接入点已不存在（现在直接填 Model ID 即可）。",
+      "facts": {
+        "http_status": 404,
+        "error_code": "InvalidEndpoint.NotFound",
+        "category": "接入配置"
+      },
+      "sources": ["S04", "S02", "S07"]
+    },
+    {
+      "id": "err.model.400.wrong-api",
+      "kind": "error",
+      "title": "400 InvalidParameter：模型不支持这个 API",
+      "tags": ["400", "模型选型", "排查"],
+      "text": "官方错误消息形态：The parameter `model` specified in the request are not valid: the requested model <id> does not support this api. 典型场景是把文生图模型、向量化模型当成 chat 模型调用。多模态向量化另有专门端点。遇到这个错误不要先怀疑 key，先核对「这个模型的类型」和「你调的端点」是否匹配。",
+      "facts": {
+        "http_status": 400,
+        "error_code": "InvalidParameter",
+        "category": "模型与端点不匹配"
+      },
+      "sources": ["S04"]
+    },
+    {
+      "id": "err.model.404.no-access",
+      "kind": "error",
+      "title": "404：模型不存在或你没有访问权限",
+      "tags": ["404", "开通", "权限", "排查"],
+      "text": "官方错误消息形态：The model or endpoint xxx does not exist or you do not have access to it. 与「接入点不存在」的 404 长得很像，但根因不同：这个通常是**模型未开通**或账号权限不足。官方 FAQ 给的自查动作是核对两个配置文件里的 baseurl 是否一致。给客户排障时，这两类 404 要分开问，否则会来回浪费好几轮。",
+      "facts": {
+        "http_status": 404,
+        "category": "开通与权限"
+      },
+      "sources": ["S04"]
+    },
+    {
+      "id": "err.rate.429.rpm",
+      "kind": "error",
+      "title": "429 RateLimitExceeded.EndpointRPMExceeded：请求数超限",
+      "tags": ["429", "限流", "并发", "排查"],
+      "text": "单位时间请求数（RPM）超过配额。注意错误码里带 Endpoint 前缀意味着限流挂在**接入点维度**上 —— 这正是自定义接入点仍然有用的原因之一。做容量规划时要区分 RPM 与 TPM 两个独立上限，压测只压 QPS 不压 token 量会漏掉 TPM 这一侧。",
+      "facts": {
+        "http_status": 429,
+        "error_code": "RateLimitExceeded.EndpointRPMExceeded",
+        "category": "限流"
+      },
+      "sources": ["S04"]
+    },
+    {
+      "id": "err.rate.429.tpm",
+      "kind": "error",
+      "title": "429 RateLimitExceeded.EndpointTPMExceeded：token 数超限",
+      "tags": ["429", "限流", "token", "排查"],
+      "text": "单位时间 token 数（TPM）超过配额。与 RPM 是两个独立上限。长上下文场景尤其容易撞 TPM：单次请求动辄十几万 token，请求数不多也会打满。缓解方向：错峰、拆批、降上下文、开缓存。",
+      "facts": {
+        "http_status": 429,
+        "error_code": "RateLimitExceeded.EndpointTPMExceeded",
+        "category": "限流"
+      },
+      "sources": ["S04"]
+    },
+    {
+      "id": "err.quota.429.free-trial",
+      "kind": "error",
+      "title": "429 QuotaExceeded：免费试用额度用尽",
+      "tags": ["429", "免费额度", "报价", "排查"],
+      "text": "官方错误消息形态：Your account [xxx] has exhausted its free trial quota for the [model] model. 注意两件事：① 免费额度**按模型分别计算**，所以可能「这个模型还能用、那个已经用完」；② 与限流（RateLimitExceeded）是两回事 —— 前者是额度没了，后者是短时间打太快。给客户解释时要分清楚，否则客户会以为是系统不稳定。",
+      "facts": {
+        "http_status": 429,
+        "error_code": "QuotaExceeded",
+        "category": "额度"
+      },
+      "sources": ["S04", "S06"]
+    },
+    {
+      "id": "err.account.403.overdue",
+      "kind": "error",
+      "title": "403 AccountOverdueError：账号欠费",
+      "tags": ["403", "欠费", "排查"],
+      "text": "账号欠费导致请求被拒。这类错误最容易被误判成「模型故障」——排障时要先看错误码再看现象。对客户的建议是把欠费告警接到自己的监控上，而不是等业务侧报错才发现。",
+      "facts": {
+        "http_status": 403,
+        "error_code": "AccountOverdueError",
+        "category": "账号状态"
+      },
+      "sources": ["S04"]
+    },
+    {
+      "id": "err.request.400.missing-parameter",
+      "kind": "error",
+      "title": "400 MissingParameter / InvalidParameter：请求参数问题",
+      "tags": ["400", "参数", "排查"],
+      "text": "请求体缺必填字段，或字段取值非法（例如 max_tokens 与输入长度之和超过上下文窗口）。排障建议：把出错的请求体原样打日志 —— 这类问题靠猜是最慢的。",
+      "facts": {
+        "http_status": 400,
+        "error_code": "MissingParameter",
+        "category": "请求参数"
+      },
+      "sources": ["S04"]
+    },
+    {
+      "id": "err.server.500",
+      "kind": "error",
+      "title": "500 InternalServiceError：服务端错误",
+      "tags": ["500", "重试", "排查"],
+      "text": "服务端内部错误。工程上的处理原则与其他 5xx 一致：**指数退避重试 + 上限**，并且要防「同一个失败动作无限重试」——这类失败的日志里往往没有 error，只有账单在涨。客户侧建议：把重试次数与最终失败率一起纳入监控。",
+      "facts": {
+        "http_status": 500,
+        "error_code": "InternalServiceError",
+        "category": "服务端"
+      },
+      "sources": ["S04"]
+    },
+    {
+      "id": "err.badjson.contract",
+      "kind": "error",
+      "title": "模型输出不是合法 JSON（契约失败）——agent 项目的高频故障",
+      "tags": ["结构化输出", "契约", "重试", "可靠性"],
+      "text": "这不是方舟特有的错误码，而是所有依赖结构化输出的 agent 项目都会遇到的失败：模型偶尔会吐出围栏代码块、前后夹带解释、字段缺失、或引用了一个不存在的 id。工程上的正确做法是**在本地做契约校验并重试**，而不是靠提示词「请务必输出 JSON」这种请求。本仓库的 contracts.py 就是这一层：校验不过 → 本地重试 → 超过上限就如实标注失败，绝不带病往下一步传。",
+      "facts": {
+        "category": "工程可靠性",
+        "handled_by": "arksol/contracts.py"
+      },
+      "sources": ["S04", "S90"]
+    }
+  ]
+}
