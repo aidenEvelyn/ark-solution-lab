@@ -122,15 +122,15 @@ python -m arksol eval --provider mock --out results/
 python -m unittest discover -s tests -t .
 ```
 
-想接真实模型（默认支持任何 OpenAI 兼容端点，含火山方舟 / 豆包）。**密钥只走环境变量，绝不写进代码**：
+想接真实模型（默认支持任何 OpenAI 兼容端点，含火山方舟 / 豆包）。**密钥只走 `.env` 或环境变量，绝不写进代码：**
 
 ```bash
-export ARK_API_KEY=...                                   # 不要在仓库里留任何 key
-export ARK_BASE_URL=https://ark.cn-beijing.volces.com/api/v3
-export ARK_MODEL=doubao-seed-2-1-turbo-260628
-export ARK_PRICE_IN=3 ARK_PRICE_OUT=15                   # 元/百万 tokens，用于成本换算
+cp .env.example .env        # 把 key 填进 .env；它已被 .gitignore 排除，不会进版本库
 python -m arksol eval --provider openai-compat --out results/ark/
 ```
+
+`OpenAICompatProvider.from_env()` 的优先级是：显式参数 > 真实环境变量 > `.env` 文件。
+`.env` 的读取是**零依赖**的（`arksol/env.py`，不引入 python-dotenv）。
 
 ## 项目结构
 

@@ -10,12 +10,12 @@
 from __future__ import annotations
 
 import json
-import os
 import time
 import urllib.error
 import urllib.request
 from typing import Any, Dict, Mapping, Optional
 
+from arksol.env import effective_environ
 from arksol.errors import ProviderError
 from arksol.llm.base import LLMRequest, LLMResponse, Provider
 from arksol.tools.cost import cost_cny, estimate_tokens
@@ -64,8 +64,15 @@ class OpenAICompatProvider(Provider):
         model: Optional[str] = None,
         base_url: Optional[str] = None,
         timeout: float = 60.0,
+        dotenv_path: Optional[str] = None,
     ) -> "OpenAICompatProvider":
-        environ = env if env is not None else os.environ
+        """配置来源优先级：显式参数 > 真实环境变量 > `.env` 文件。
+
+        显式传了 `env` 就只用它（便于测试）；否则用 `有效环境`：
+        `.env` 打底、真实环境变量覆盖 —— 这样部署环境里设的值不会被仓库里
+        一个忘记删的 .env 盖掉。
+        """
+        environ = dict(env) if env is not None else effective_environ(dotenv_path)
 
         def first(names) -> Optional[str]:
             for name in names:
