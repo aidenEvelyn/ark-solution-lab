@@ -67,25 +67,37 @@ def build_followup(requirement: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
 
 def _intake(harness: Harness, state: RunState, meter: Meter, record: RunRecord) -> Optional[RunRecord]:
-    """跑 Intake。若信息不足则填好 record 并返回它（表示「到此结束」）。"""
+    """跑 Intake。
+
+    返回一个填好的 record 表示「到此结束」；返回 None 表示继续往下走。
+    `harness.force_draft` 为 True 时，即使判为信息不足也继续 —— 但判断照样记录在 metrics 里。
+
+    欠规格还有一个分支要区分清楚：Intake 说「信息不足」却**一条追问都没给**。
+    那不是「它想追问」，那是产出不可用 —— 如实报错，不替它编问题。
+    """
     requirement = IntakeAgent(harness.provider, **_agent_kwargs(harness, meter)).run(state)
     state.requirement = requirement
     record.requirement = requirement
 
+    sufficient = bool(requirement.get("sufficient", True))
     followup = build_followup(requirement)
-    if followup is not None:
-        state.followup = followup
-        record.followup = followup
-        record.ok = True
-        return record
 
-    if requirement.get("sufficient") is False:
-        # 判为信息不足却没给追问清单 —— 这是缺陷，如实记录，不替它编问题
+    if sufficient:
+        return None
+
+    if followup is None:
         record.error = "intake 判定信息不足，但没有给出任何追问项（契约允许，但结果不可用）"
         state.stop_reason = record.error
         return record
 
-    return None
+    if harness.force_draft:
+        # 强制出方案模式：不在这里结束，但把「它本来想追问」记进指标，单独报告
+        return None
+
+    state.followup = followup
+    record.followup = followup
+    record.ok = True
+    return record
 
 
 def _clip(text: Any, limit: int = 200) -> str:
@@ -169,6 +181,9 @@ def run_multi(client_input: str, *, harness: Harness, case_id: Optional[str] = N
             ]
 
             revision_notes: Optional[List[Dict[str, Any]]] = None
+            previous_signature: Optional[tuple] = None
+            previous_issue_count: Optional[int] = None
+
             for attempt in range(1, MAX_REWRITES + 2):
                 draft = WriterAgent(
                     harness.provider,
@@ -190,10 +205,34 @@ def run_multi(client_input: str, *, harness: Harness, case_id: Optional[str] = N
 
                 if critique.get("verdict") == "pass":
                     break
+
+                issues = list(critique.get("issues") or [])
+                signature = tuple(sorted(str(issue.get("detail", ""))[:80] for issue in issues))
+
+                # 停止条件一：连续两轮被**同一批问题**退回 —— 改不动了。
+                if signature and signature == previous_signature:
+                    state.stop_reason = f"连续两轮被同一批问题退回（{len(signature)} 条），判定为改不动，提前停止"
+                    break
+
+                # 停止条件二：**改写没有收敛**（问题数没有减少）。
+                # 真实模型下常见这种情形：模型层审校每轮都能提出新的、也确实成立的意见，
+                # 但那些意见多半源于「客户信息不足」而不是「写作质量差」—— 改到第几轮都收不了。
+                # 判据用「问题数是否下降」而不是「签名是否相同」，因为每轮的措辞都在变。
+                if previous_issue_count is not None and len(issues) >= previous_issue_count:
+                    state.stop_reason = (
+                        f"改写未收敛（问题数 {previous_issue_count} → {len(issues)}，没有减少），"
+                        "提前停止 —— 这类问题多半要靠客户补信息，不是靠再改一遍"
+                    )
+                    break
+
+                previous_signature = signature
+                previous_issue_count = len(issues)
+
                 if attempt == MAX_REWRITES + 1:
                     state.stop_reason = f"审校连续 {attempt} 轮未通过，已停止并如实标注"
                     break
-                revision_notes = list(critique.get("issues") or [])
+
+                revision_notes = issues
 
             record.draft = state.draft
             record.critique = state.critiques[-1] if state.critiques else None

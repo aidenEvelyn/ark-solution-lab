@@ -233,7 +233,6 @@ def _h_evidence(request: LLMRequest) -> str:
         items.append(
             {
                 "id": f"EV-{index:03d}",
-                "topic": topic,
                 "text": _short(snippet.get("text", ""), 80),
                 "source_id": str(snippet.get("source_id") or "S01"),
                 "confidence": str(snippet.get("confidence") or "中"),

@@ -26,6 +26,9 @@ class LLMRequest:
     temperature: float = 0.0
     max_tokens: int = 1200
     stop: Optional[list] = None
+    # 厂商特有的请求体字段（例如关闭思考模式：{"thinking": {"type": "disabled"}}）。
+    # 放在这里而不是硬编码进 provider —— 各家网关的参数名不一样，别把差异写死在一处。
+    extra_body: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass

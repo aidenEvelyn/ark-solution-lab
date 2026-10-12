@@ -23,7 +23,7 @@ class EvidenceAgent(Agent):
     name = "evidence"
     tag = "evidence"
     schema_name = "EvidenceBundle"
-    max_tokens = 1000
+    max_tokens = 2400
 
     def __init__(self, provider, *, topic: str, topic_instruction: str, snippets: Sequence[Dict[str, Any]], **kwargs: Any) -> None:
         super().__init__(provider, **kwargs)

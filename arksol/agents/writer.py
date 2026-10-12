@@ -20,9 +20,16 @@ _COMMON_RULES = (
     "- summary：一句话方案概述（说明选了哪个档位的模型、怎么部署）\n"
     "- model_choice：推荐的模型档位与理由\n"
     "- deployment：部署方式\n"
-    "- claims：技术断言数组。**每条断言必须携带 evidence_ref**，"
+    "- claims：**事实性断言**的数组（见下方说明）。每条必须携带 evidence_ref，"
     "它只能取两类值：证据表里真实存在的证据 id，或 EV-NONE\n"
     "- followup_questions：这份方案还需要向客户追问什么；没有就输出空数组\n\n"
+    "关于 claims 的边界（很重要）：\n"
+    "claims 只放**需要证据支撑的事实性断言** —— 模型规格、价格、限制、平台能力这类\n"
+    "「说错了就是错的」的话。\n"
+    "你自己的**推断、取舍理由、假设**不要放进 claims（例如「因为客户延迟不敏感，所以优先保质量」）——\n"
+    "那些写进 summary、model_choice 或 followup_questions。\n"
+    "如果确实没有证据，就把 evidence_ref 填 EV-NONE 并如实说明 —— 这比编一个 id 好得多；\n"
+    "但要尽量避免：**能靠推断得出的结论，本来就不该当成需要证据的断言来写。**\n\n"
     "红线：**不要编造 evidence_ref**。指向一个不存在的证据，比老老实实标 EV-NONE 严重得多 —— "
     "前者伪装成有依据。"
 )
@@ -38,7 +45,9 @@ class MemoryPlanAgent(Agent):
     name = "plan_from_memory"
     tag = "single"
     schema_name = "SolutionDraft"
-    max_tokens = 1600
+    # 真实模型下，一份带 4-6 条断言的方案 JSON 常常超过 1600 tokens；
+    # 给不够会表现为「契约解析失败」，很容易被误判成模型不听话。
+    max_tokens = 3200
 
     def __init__(self, provider, *, requirement: Dict[str, Any], **kwargs: Any) -> None:
         super().__init__(provider, **kwargs)
@@ -67,7 +76,9 @@ class WriterAgent(Agent):
     name = "writer"
     tag = "writer"
     schema_name = "SolutionDraft"
-    max_tokens = 1600
+    # 真实模型下，一份带 4-6 条断言的方案 JSON 常常超过 1600 tokens；
+    # 给不够会表现为「契约解析失败」，很容易被误判成模型不听话。
+    max_tokens = 3200
 
     def __init__(
         self,

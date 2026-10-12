@@ -27,7 +27,7 @@ class CriticAgent(Agent):
     name = "critic"
     tag = "critic"
     schema_name = "Critique"
-    max_tokens = 1000
+    max_tokens = 2000
 
     def __init__(
         self,

@@ -130,7 +130,20 @@ def review(
     keyword_map: Optional[Mapping[str, Sequence[str]]] = None,
     extra_issues: Optional[Sequence[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
-    """产出一份符合 Critique 契约的审校结论（规则部分）。"""
+    """产出一份符合 Critique 契约的审校结论（规则部分）。
+
+    **退回规则的核心口径：只退回「能改而没改」的问题。**
+
+    - `dangling`（引用了不存在的证据）→ 退回。模型能改：要么找到真证据，要么老实标 EV-NONE。
+      伪造引用比「承认没有证据」严重得多 —— 它伪装成了有依据。
+    - 客户约束未回应 → 退回。这是漏项，能补。
+    - `no_evidence`（显式标了 EV-NONE）→ **不退回**，只计入「无依据断言率」。
+      它已经如实标注了「这条我没有证据」，改无可改；反复退回只会让流水线空转 ——
+      真实模型下实测就是这个结果：连续 3 轮改写都在同样三条上打转。
+
+    这个口径是有产品含义的：**售前的草稿本来就包含判断和假设**。
+    把「判断」和「编造事实」混为一谈，等于逼模型要么撒谎、要么什么都不写。
+    """
     claims = classify_claims(draft, evidence_ids)
     constraints = check_constraints(requirement or {}, draft, keyword_map=keyword_map)
 
@@ -142,8 +155,6 @@ def review(
                 "detail": f"引用了不存在的证据 {claim.get('evidence_ref')}：{claim.get('text', '')[:40]}",
             }
         )
-    for claim in claims["no_evidence"]:
-        issues.append({"type": "unsupported_claim", "detail": f"没有证据支撑：{claim.get('text', '')[:40]}"})
     for constraint in constraints["missed"]:
         issues.append(
             {

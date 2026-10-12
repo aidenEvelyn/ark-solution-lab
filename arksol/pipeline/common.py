@@ -66,6 +66,15 @@ class Harness:
     provider: Provider
     tracer: Optional[Tracer] = None
     guard: Optional[BudgetGuard] = None
+    # 为 True 时：即使 Intake 判为「信息不足」，也继续出方案。
+    #
+    # 为什么需要它：真实模型对「信息是否充足」比人保守得多（实测 20 条用例里只有 4 条被判充足）。
+    # 如果就这样跑，三条流水线全都停在追问阶段，方案质量的对照实验就无从谈起。
+    # 所以把两件事拆开测：
+    #   · 方案质量对照 —— 强制出方案，用同一份需求比三条流水线
+    #   · 追问行为     —— 单独一张表，跟人工标注比对，如实报告分歧
+    # **这不是为了让结果好看而放松门槛**：追问判定照样被记录并单独报告。
+    force_draft: bool = False
 
     @classmethod
     def build(
@@ -76,6 +85,7 @@ class Harness:
         tracer: Optional[Tracer] = None,
         budget: Optional[Budget] = None,
         guard: Optional[BudgetGuard] = None,
+        force_draft: bool = False,
     ) -> "Harness":
         knowledge = kb or load_default_kb()
         return cls(
@@ -84,6 +94,7 @@ class Harness:
             provider=provider,
             tracer=tracer,
             guard=guard or BudgetGuard(budget or Budget()),
+            force_draft=force_draft,
         )
 
     def retrieve(self, query: str, *, top_k: int = 3, topic: str = "综合检索") -> List[Dict[str, Any]]:
@@ -118,7 +129,6 @@ def snippets_to_evidence(snippets: Sequence[Dict[str, Any]], *, topic: str = "�
         items.append(
             {
                 "id": f"EV-{index:03d}",
-                "topic": topic,
                 "text": str(snippet.get("text", "")),
                 "source_id": str(snippet.get("source_id", "")),
                 "confidence": str(snippet.get("confidence", "低")),
@@ -233,6 +243,8 @@ def compute_metrics(
         "constraints_missed": 0,
         "coverage_rate": 1.0,
         "followup_asked": followed_up,
+        # Intake 对「信息是否充足」的判断 —— 与用例的人工标注分开记录，分歧如实上报
+        "intake_sufficient": None if requirement is None else bool(requirement.get("sufficient", True)),
     }
     if not draft:
         return base

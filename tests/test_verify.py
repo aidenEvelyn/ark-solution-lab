@@ -150,11 +150,18 @@ class TestReview(unittest.TestCase):
         self.assertEqual(result["issues"][0]["type"], "unsupported_claim")
         self.assertIn("EV-999", result["issues"][0]["detail"])
 
-    def test_no_evidence_claim_triggers_revise(self) -> None:
-        draft = make_draft([make_claim(ref=NO_EVIDENCE_MARK)])
+    def test_no_evidence_claim_is_counted_but_does_not_block(self) -> None:
+        """退回规则：**只退回「能改而没改」的问题。**
+
+        EV-NONE 是「我确实没证据，并且如实标注了」—— 改无可改。
+        反复退回只会让流水线空转（真实模型下实测连续 3 轮都在同样几条上打转）。
+        它照样计进「无依据断言率」，指标不会因此变好看。
+        """
+        draft = make_draft([make_claim(ref=NO_EVIDENCE_MARK), make_claim(ref="EV-001")])
         result = review(draft, evidence_ids={"EV-001"})
-        self.assertEqual(result["verdict"], "revise")
-        self.assertIn("没有证据支撑", result["issues"][0]["detail"])
+        self.assertEqual(result["verdict"], "pass")
+        self.assertEqual(result["issues"], [])
+        self.assertEqual(classify_claims(draft, {"EV-001"})["unsupported_count"], 1)
 
     def test_missed_constraint_triggers_revise(self) -> None:
         draft = make_draft([make_claim(ref="EV-001")], summary="方案整体可行")

@@ -101,11 +101,36 @@ def _conclusions(summaries: Sequence[PipelineSummary], fault_rows: Sequence[Faul
     return lines or ["- 本次运行没有产生可比较的结论（检查用例与流水线配置）。"]
 
 
+def _intake_agreement(runs: Sequence[Any]) -> Dict[str, Any] | None:
+    """比对 Intake 的「信息是否充足」判断与用例的人工标注。"""
+    per_case: Dict[str, Any] = {}
+    for run in runs:
+        if run.case_id in per_case:
+            continue
+        judged = (run.metrics or {}).get("intake_sufficient")
+        if judged is None:
+            continue
+        per_case[run.case_id] = bool(judged)
+    if not per_case:
+        return None
+
+    label_by_case = {run.case_id: bool(run.needs_followup) for run in runs}
+    mismatches = []
+    for case_id, judged in per_case.items():
+        label_needs_followup = label_by_case.get(case_id, False)
+        if label_needs_followup == (not judged):  # 一致：标注说要追问 == 模型判不足
+            continue
+        mismatches.append((case_id, label_needs_followup, judged))
+
+    return {"total": len(per_case), "agree": len(per_case) - len(mismatches), "mismatches": mismatches}
+
+
 def render_report(
     *,
     summaries: Sequence[PipelineSummary],
     fault_rows: Sequence[FaultRow],
     meta: Dict[str, Any],
+    runs: Sequence[Any] = (),
 ) -> str:
     by_name = _by_name(summaries)
     base = by_name.get("no-evidence")
@@ -123,6 +148,12 @@ def render_report(
         f" ｜ 流水线：{', '.join(f'`{name}`' for name in meta.get('pipelines', []))}"
     )
     parts.append(f"> 复现：`{meta.get('command', 'python -m arksol eval --provider mock')}`")
+    if meta.get("force_draft"):
+        parts.append(
+            "> ⚠️ 本次启用了 `--force-draft`：**即使 Intake 判为信息不足也继续出方案**。"
+            "目的是把「方案质量对照」与「追问行为」两件事拆开测 —— "
+            "追问判定照样被记录，见第五节。"
+        )
     parts.append("")
 
     # ---- 适用范围：必须先说清楚 -------------------------------------------------------
@@ -246,14 +277,58 @@ def render_report(
     )
     parts.append("")
 
+    # ---- Intake 的追问判定 -------------------------------------------------------------
+    agreement = _intake_agreement(runs)
+    if agreement:
+        parts.append("## 五、Intake 的追问判定 vs 人工标注")
+        parts.append("")
+        parts.append(
+            f"一致 **{agreement['agree']}/{agreement['total']}** 条。"
+            "这一栏测的是「Intake 什么时候觉得该先追问」，与人工标注（`evaluation/cases.jsonl` 里的 "
+            "`needs_followup`）比对。"
+        )
+        parts.append("")
+        if agreement["mismatches"]:
+            parts.append("不一致的用例：")
+            parts.append("")
+            parts.append(
+                _table(
+                    ["用例", "人工标注", "Intake 判定", "说明"],
+                    [
+                        [
+                            case_id,
+                            "应当先追问" if label else "信息充足、应出方案",
+                            "判为信息不足" if not judged else "判为信息充足",
+                            "**模型比人工标注更保守**" if not judged and not label else "模型认为可以直接出方案",
+                        ]
+                        for case_id, label, judged in agreement["mismatches"]
+                    ],
+                )
+            )
+            parts.append("")
+            parts.append(
+                "**这不是「模型错了」，而是两种口径的差异**：人工标注按「有没有场景 + 有没有约束」判，"
+                "模型按「能不能据此定下模型档位与部署方式」判，后者更严。"
+                "两种判法都能自圆其说，真实售前里也确实靠人拿捏 —— 这里如实并列，不替任何一方辩护。"
+            )
+        else:
+            parts.append("没有任何分歧。")
+        if meta.get("provider") == "mock":
+            parts.append("")
+            parts.append(
+                "⚠️ **mock 下这一栏是自证的**：mock 判定信息是否充足用的是与用例标注同一套关键词，"
+                "所以必然一致。只有在真实模型下这一栏才有信息量。"
+            )
+        parts.append("")
+
     # ---- 结论 -------------------------------------------------------------------------
-    parts.append("## 五、结论")
+    parts.append("## 六、结论")
     parts.append("")
     parts.extend(_conclusions(summaries, fault_rows))
     parts.append("")
 
     # ---- 复现 -------------------------------------------------------------------------
-    parts.append("## 六、怎么复现")
+    parts.append("## 七、怎么复现")
     parts.append("")
     parts.append("```bash")
     parts.append("# 离线复现（零依赖、不花钱）")

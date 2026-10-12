@@ -20,7 +20,9 @@ class IntakeAgent(Agent):
     name = "intake"
     tag = "intake"
     schema_name = "Requirement"
-    max_tokens = 1000
+    # 真实模型下，一份带若干约束与追问项的 JSON 需要更多额度；
+    # 额度不够会表现为「契约解析失败」，别把它误读成模型不听话。
+    max_tokens = 2400
 
     def system_prompt(self) -> str:
         return (
@@ -37,9 +39,19 @@ class IntakeAgent(Agent):
             "cost / latency / compliance / concurrency / quality / other，"
             "critical 表示「这条不满足方案就不成立」\n"
             "- open_questions：还没问清楚、且**答案会改变方案**的问题；每条必须写 why_critical\n"
-            "- sufficient：信息是否足以出方案\n\n"
-            "判断规则：如果客户没说清关键约束、或表述含糊到无法选型，"
-            "把 sufficient 设为 false 并给出 open_questions —— 此时不要猜、不要替客户假设。"
+            "- sufficient：信息是否足以**出一版方案草稿**\n\n"
+            "关键：sufficient 判断的是「够不够出草稿」，不是「够不够定稿」。"
+            "售前第一次交流本来就拿不到全部细节，把标准定成「够定稿」会导致一份方案都出不来。\n\n"
+            "把缺失信息分成两级，分开处理：\n"
+            "A. **阻断级** —— 缺了它，方案的方向就无从谈起。例如：不知道客户要解决什么业务问题；"
+            "不知道数据能不能出内网（这决定公有云还是私有化，是第一个分叉）；完全没有量级与成本信息。\n"
+            "   → sufficient 设为 **false**，把问题写进 open_questions，此时不要出方案。\n"
+            "B. **细化级** —— 缺了它方案会有偏差，但方向不变。例如：文档规模、延迟目标、"
+            "准确率期望、预算是否包含硬件。\n"
+            "   → sufficient 设为 **true**，正常出方案；同时把这些点写进 open_questions，"
+            "它们会随方案一起交给客户确认。\n\n"
+            "可操作的判据：**如果一个问题的答案无论是什么，都不会改变你推荐的模型档位和部署方式，"
+            "那它就是细化级，不要用它把方案拦下来。**"
         )
 
     def payload(self, state: RunState) -> Dict[str, Any]:

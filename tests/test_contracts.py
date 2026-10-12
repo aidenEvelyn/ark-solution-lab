@@ -119,9 +119,7 @@ class TestClaimMustCiteEvidence(unittest.TestCase):
     def test_rejects_bad_source_id_format(self) -> None:
         bundle = {
             "topic": "模型选型",
-            "items": [
-                {"id": "EV-1", "topic": "选型", "text": "上下文 1024k", "source_id": "SRC1", "confidence": "中"}
-            ],
+            "items": [{"id": "EV-1", "text": "上下文 1024k", "source_id": "SRC1", "confidence": "中"}],
             "missing": [],
         }
         with self.assertRaises(ContractError) as ctx:
@@ -131,12 +129,22 @@ class TestClaimMustCiteEvidence(unittest.TestCase):
     def test_accepts_well_formed_bundle(self) -> None:
         bundle = {
             "topic": "模型选型",
-            "items": [
-                {"id": "EV-1", "topic": "选型", "text": "上下文 1024k", "source_id": "S01", "confidence": "中"}
-            ],
+            "items": [{"id": "EV-1", "text": "上下文 1024k", "source_id": "S01", "confidence": "中"}],
             "missing": ["未查到最新版本单价"],
         }
         validate_named(bundle, "EvidenceBundle")
+
+    def test_rejects_redundant_topic_on_evidence_item(self) -> None:
+        # 主题已经在 bundle 上；要求每条证据重复填一遍，只会制造无谓的契约失败
+        bundle = {
+            "topic": "模型选型",
+            "items": [
+                {"id": "EV-1", "topic": "模型选型", "text": "上下文 1024k", "source_id": "S01", "confidence": "中"}
+            ],
+            "missing": [],
+        }
+        with self.assertRaises(ContractError):
+            validate_named(bundle, "EvidenceBundle")
 
     def test_rejects_question_without_why_critical(self) -> None:
         # 追问必须说明「这条会改变什么」—— 说不出改变什么的问题不该问

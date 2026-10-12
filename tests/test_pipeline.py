@@ -188,12 +188,26 @@ class TestFaultInjectionAcrossPipelines(unittest.TestCase):
         self.assertEqual(record.critique["verdict"], "pass")
         self.assertEqual(record.metrics["claims_dangling"], 0)
 
-    def test_critic_gives_up_after_max_rewrites(self) -> None:
+    def test_critic_gives_up_early_when_rewrites_do_not_converge(self) -> None:
+        """改不动就停，别烧第三轮。
+
+        真实模型下实测：模型层审校每轮都能提出新的、也确实成立的意见，
+        但那些意见多半源于「客户信息不足」而不是「写作质量差」—— 改到第几轮都收不了。
+        """
         provider = MockProvider(faults=[Fault(kind="unsupported_claim", tag="writer", at_call=1, times=9)])
         record = run_multi(GOOD_INPUT, harness=harness_with(provider))
-        self.assertEqual(record.rounds, 3)  # 初次 + 2 次改写
+        self.assertEqual(record.rounds, 2)  # 第一轮退，第二轮就停 —— 不会烧第三轮
         self.assertEqual(record.critique["verdict"], "revise")
-        self.assertIn("未通过", record.stop_reason or "")
+        # mock 的坏输出每轮完全一样，所以走的是「同一批问题」那条停止条件；
+        # 「未收敛」那条在真实模型下才会触发（见 docs/EVALUATION.md）
+        self.assertIn("改不动", record.stop_reason or "")
+
+    def test_stops_on_identical_repeated_issues(self) -> None:
+        # 规则层的问题每轮完全一样 → 走「同一批问题」这条停止条件
+        provider = MockProvider(faults=[Fault(kind="constraint_ignored", tag="writer", at_call=1, times=9)])
+        record = run_multi(GOOD_INPUT, harness=harness_with(provider))
+        self.assertEqual(record.rounds, 2)
+        self.assertIn("改不动", record.stop_reason or "")
 
     def test_constraint_ignored_is_caught_by_rules(self) -> None:
         provider = MockProvider(faults=[Fault(kind="constraint_ignored", tag="writer", at_call=1, times=9)])
@@ -256,6 +270,47 @@ class TestRecordSerialization(unittest.TestCase):
         record = run_multi(GOOD_INPUT, harness=harness_with(), case_id="c1")
         payload = json.dumps(record.to_dict(), ensure_ascii=False)
         self.assertIn("c1", payload)
+
+
+class TestSchemaTravelsWithThePrompt(unittest.TestCase):
+    """这是一条**踩坑换来的回归断言**。
+
+    早期版本只在提示词里用中文散文描述字段，把确切的字段名与枚举留在代码的契约里。
+    真实模型只能猜，于是用 note 代替 detail、漏 topic、自创 kind —— 而「契约不通过就重试」
+    在这种情况下永远收敛不了：一次运行烧掉 13 次调用。
+
+    契约必须同时出现在提示词里和校验器里。这个测试就是防止它再次被拿掉。
+    """
+
+    def test_system_prompt_carries_the_schema(self) -> None:
+        from arksol.agents.intake import IntakeAgent
+        from arksol.llm import MockProvider
+        from arksol.state import RunState
+
+        agent = IntakeAgent(MockProvider())
+        request = agent.build_request(RunState(user_input="随便一段客户原话"))
+        self.assertEqual(request.schema_name, "Requirement")
+        self.assertIn("必须严格遵守", request.system)
+        for field in ("business_scenario", "sufficient", "open_questions"):
+            self.assertIn(field, request.system)
+
+    def test_writer_prompt_lists_allowed_claim_kinds(self) -> None:
+        from arksol.agents.writer import WriterAgent
+        from arksol.llm import MockProvider
+        from arksol.state import RunState
+
+        agent = WriterAgent(MockProvider(), requirement={"business_scenario": "x"}, evidence_items=[])
+        request = agent.build_request(RunState(user_input="x"))
+        self.assertIn("model_choice", request.system)
+        self.assertIn("evidence_ref", request.system)
+
+    def test_rendered_schema_is_valid_json(self) -> None:
+        import json as _json
+
+        from arksol.contracts import SCHEMAS, render_schema
+
+        for name in SCHEMAS:
+            self.assertIsInstance(_json.loads(render_schema(name)), dict)
 
 
 class TestUnusedImportsGuard(unittest.TestCase):

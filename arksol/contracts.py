@@ -124,11 +124,12 @@ CONFIDENCE_LEVELS = ["高", "中", "低"]
 
 EVIDENCE_ITEM = {
     "type": "object",
-    "required": ["id", "topic", "text", "source_id", "confidence"],
+    # 刻意**不**要求每条证据再写一遍 topic：主题已经在 EvidenceBundle 上，
+    # 让模型重复填一个冗余字段，只会制造无谓的契约失败。
+    "required": ["id", "text", "source_id", "confidence"],
     "additionalProperties": False,
     "properties": {
         "id": {"type": "string", "pattern": r"^EV-[A-Za-z0-9\-]+$"},
-        "topic": {"type": "string", "minLength": 1},
         "text": {"type": "string", "minLength": 4},
         "source_id": {"type": "string", "pattern": r"^S\d+$"},
         "confidence": {"type": "string", "enum": CONFIDENCE_LEVELS},
@@ -165,7 +166,10 @@ CLAIM = {
         # evidence_ref 强制以 EV- 开头：**没有引用的断言在契约层就不合法**
         "text": {"type": "string", "minLength": 4},
         "evidence_ref": {"type": "string", "pattern": r"^EV-"},
-        "kind": {"type": "string", "enum": ["capability", "limit", "price", "compliance", "performance"]},
+        "kind": {
+            "type": "string",
+            "enum": ["capability", "limit", "price", "compliance", "performance", "model_choice", "deployment"],
+        },
     },
 }
 
@@ -258,6 +262,21 @@ def validate_named(instance: Any, schema_name: str) -> None:
     validate(instance, SCHEMAS[schema_name], schema_name=schema_name)
 
 
+def render_schema(schema_name: str) -> str:
+    """把契约渲染成可以放进提示词的 JSON。
+
+    **这是本项目踩过的一个大坑，值得单独说明**：
+    早期版本只在提示词里用中文散文描述字段，而把确切的字段名与枚举留在代码的契约里。
+    真实模型于是只能猜 —— 用 `note` 代替 `detail`、漏掉 `topic`、
+    自创 `kind: model_choice`。而「契约不通过就本地重试」在这种情况下**永远不可能收敛**：
+    模型每次都在重新猜，三次尝试全废，一次运行烧掉 13 次调用。
+
+    教训：**契约必须同时出现在两个地方 —— 提示词里（告诉它要什么形状）和校验器里（检查它给了什么形状）。
+    两边同源，才不会互相打架。** 这个函数就是那个「同源」的实现。
+    """
+    return json.dumps(SCHEMAS[schema_name], ensure_ascii=False, indent=2)
+
+
 # --------------------------------------------------------------------------------------
 # 从模型自由文本里抠出符合契约的对象
 # --------------------------------------------------------------------------------------
@@ -268,31 +287,44 @@ _FENCE_RE = re.compile(r"```(?:json|JSON)?\s*(.*?)```", re.S)
 def extract_json(text: str) -> Any:
     """从可能夹带废话/围栏的模型输出里抠出 JSON 对象。
 
-    支持的三种形态：纯 JSON、```json 围栏、前后有解释性文字。
-    局限：用「第一个 { 到最后一个 }」做兜底，遇到字符串里含大括号的极端情况会失败 ——
-    这种情况下让模型重试，比在这里写一个容错解析器更划算。
+    三级策略，从严格到宽松：
+    1. 围栏代码块里的内容；
+    2. 整段文本本身；
+    3. **扫描每一个 `{` / `[` 起点，用 raw_decode 试着解出一个完整对象**（取第一个成功的）。
+
+    第 3 条是这里的关键：早期版本用「第一个 `{` 到最后一个 `}`」兜底，
+    当模型在 JSON 后面又写了一段带大括号的解释时，会圈进多余内容而解析失败 ——
+    这不是模型的问题，是解析器的问题。raw_decode 只认**第一个完整对象**，稳得多。
     """
     if not isinstance(text, str) or not text.strip():
         raise ContractError("<json>", "$", "输出为空")
 
-    candidates = [text.strip()]
+    stripped = text.strip()
+    candidates: list[str] = []
     fence = _FENCE_RE.search(text)
     if fence:
-        candidates.insert(0, fence.group(1).strip())
+        candidates.append(fence.group(1).strip())
+    candidates.append(stripped)
 
-    stripped = text.strip()
-    start = min([i for i in (stripped.find("{"), stripped.find("[")) if i >= 0], default=-1)
-    if start >= 0:
-        end = max(stripped.rfind("}"), stripped.rfind("]"))
-        if end > start:
-            candidates.append(stripped[start : end + 1])
-
+    decoder = json.JSONDecoder()
     last_error: Optional[str] = None
+
     for candidate in candidates:
         try:
             return json.loads(candidate)
         except json.JSONDecodeError as exc:
             last_error = str(exc)
+
+    for index, char in enumerate(stripped):
+        if char not in "{[":
+            continue
+        try:
+            value, _ = decoder.raw_decode(stripped[index:])
+            return value
+        except json.JSONDecodeError as exc:
+            last_error = str(exc)
+            continue
+
     raise ContractError("<json>", "$", f"无法解析为 JSON（{last_error}）")
 
 

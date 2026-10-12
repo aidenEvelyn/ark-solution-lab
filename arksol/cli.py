@@ -58,18 +58,31 @@ def build_parser() -> argparse.ArgumentParser:
     demo.add_argument("--case", default=None, help="用例 id（从 --cases 指定的文件里取）")
     demo.add_argument("--cases", default=DEFAULT_CASES)
     demo.add_argument("--trace-dir", default=DEFAULT_TRACE_DIR)
+    demo.add_argument("--force-draft", action="store_true", help="即使判为信息不足也继续出方案")
 
     run = sub.add_parser("run", help="对一条自定义输入跑指定流水线")
     run.add_argument("--pipeline", default="multi", choices=PIPELINE_NAMES)
     run.add_argument("--provider", default="mock", choices=PROVIDER_NAMES)
     run.add_argument("--input", default=None, help="客户原话；缺省从标准输入读")
     run.add_argument("--trace-dir", default=DEFAULT_TRACE_DIR)
+    run.add_argument("--force-draft", action="store_true", help="即使判为信息不足也继续出方案")
 
     ev = sub.add_parser("eval", help="跑对照实验并生成报告")
     ev.add_argument("--provider", default="mock", choices=PROVIDER_NAMES)
     ev.add_argument("--pipelines", default=",".join(PIPELINE_NAMES))
     ev.add_argument("--cases", default=DEFAULT_CASES)
     ev.add_argument("--out", default="results/")
+    ev.add_argument(
+        "--force-draft",
+        action="store_true",
+        help="即使 Intake 判为信息不足也继续出方案（把「方案质量对照」与「追问行为」拆开测）",
+    )
+    ev.add_argument(
+        "--fault-limit",
+        type=int,
+        default=4,
+        help="故障注入实验用前几条用例（默认 4；结论是结构性的，与用例条数无关）",
+    )
 
     return parser
 
@@ -109,10 +122,10 @@ def load_case(path: str, case_id: str) -> Tuple[str, str]:
     raise ArksolError(f"用例文件 {case_path} 里没有 id={case_id!r} 的用例")
 
 
-def make_harness(provider_name: str, trace_dir: str) -> Harness:
+def make_harness(provider_name: str, trace_dir: str, *, force_draft: bool = False) -> Harness:
     provider = get_provider(provider_name)
     tracer = Tracer(Path(trace_dir) / f"{datetime.now():%Y%m%d-%H%M%S}-{provider_name}.jsonl")
-    return Harness.build(provider, tracer=tracer, budget=Budget())
+    return Harness.build(provider, tracer=tracer, budget=Budget(), force_draft=force_draft)
 
 
 def print_record(record: RunRecord) -> None:
@@ -176,7 +189,7 @@ def _cmd_demo(args: argparse.Namespace) -> int:
     client_input, case_id = DEMO_INPUT, None
     if args.case:
         case_id, client_input = load_case(args.cases, args.case)
-    harness = make_harness(args.provider, args.trace_dir)
+    harness = make_harness(args.provider, args.trace_dir, force_draft=args.force_draft)
     try:
         record = run_pipeline(args.pipeline, client_input, harness=harness, case_id=case_id)
     finally:
@@ -193,7 +206,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
     if not client_input:
         print("[arksol] 没有输入。用 --input 或从标准输入喂一段客户原话。", file=sys.stderr)
         return 2
-    harness = make_harness(args.provider, args.trace_dir)
+    harness = make_harness(args.provider, args.trace_dir, force_draft=args.force_draft)
     try:
         record = run_pipeline(args.pipeline, client_input, harness=harness)
     finally:
@@ -232,11 +245,14 @@ def _cmd_eval(args: argparse.Namespace) -> int:
         pipelines,
         lambda: get_provider(args.provider),
         trace_dir=trace_dir,
+        force_draft=args.force_draft,
     )
 
     # 故障注入固定比较这两条：一条有审校、一条没有 —— 只有这样才能把功劳归因清楚
     fault_pipelines = [name for name in ("evidence-once", "multi")]
-    fault_rows = run_fault_experiment(cases, fault_pipelines, trace_dir=trace_dir)
+    fault_rows = run_fault_experiment(
+        cases, fault_pipelines, trace_dir=trace_dir, force_draft=args.force_draft, limit=args.fault_limit
+    )
 
     kb_stats = load_default_kb().stats()
     meta = {
@@ -247,11 +263,15 @@ def _cmd_eval(args: argparse.Namespace) -> int:
         "underspecified_cases": sum(1 for case in cases if case.needs_followup),
         "pipelines": pipelines,
         "fault_pipelines": fault_pipelines,
-        "command": f"python -m arksol eval --provider {args.provider} --out {args.out}",
+        "force_draft": bool(args.force_draft),
+        "command": (
+            f"python -m arksol eval --provider {args.provider}"
+            f"{' --force-draft' if args.force_draft else ''} --out {args.out}"
+        ),
         "kb": kb_stats,
     }
 
-    report = render_report(summaries=summaries, fault_rows=fault_rows, meta=meta)
+    report = render_report(summaries=summaries, fault_rows=fault_rows, meta=meta, runs=runs)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "report.md").write_text(report, encoding="utf-8", newline="\n")
     write_csv(out_dir / "results.csv", runs)

@@ -78,12 +78,18 @@ class PipelineSummary:
     rewrites: int = 0
     critic_runs: int = 0
     critic_pass: int = 0
+    intake_judged: int = 0
+    intake_sufficient_count: int = 0
 
     # -- 派生指标 -----------------------------------------------------------------------
 
     @property
     def success_rate(self) -> float:
         return self.ok / self.cases if self.cases else 0.0
+
+    @property
+    def intake_sufficient_rate(self) -> float:
+        return self.intake_sufficient_count / self.intake_judged if self.intake_judged else 0.0
 
     @property
     def unsupported_rate(self) -> float:
@@ -126,6 +132,7 @@ class PipelineSummary:
                 "coverage_rate": round(self.coverage_rate, 4),
                 "followup_hit_rate": round(self.followup_hit_rate, 4),
                 "over_ask_rate": round(self.over_ask_rate, 4),
+                "intake_sufficient_rate": round(self.intake_sufficient_rate, 4),
                 "avg_calls": round(self.avg_calls, 2),
                 "avg_tokens": round(self.avg_tokens, 1),
                 "avg_cost_cny": round(self.avg_cost_cny, 6),
@@ -143,11 +150,12 @@ def _run_one(
     trace_path: Optional[Path],
     trace_run_id: str,
     budget: Optional[Budget] = None,
+    force_draft: bool = False,
 ) -> RunRecord:
     provider = provider_factory()
     tracer = Tracer(trace_path, run_id=trace_run_id) if trace_path is not None else Tracer(None)
     try:
-        harness = Harness.build(provider, tracer=tracer, budget=budget or Budget())
+        harness = Harness.build(provider, tracer=tracer, budget=budget or Budget(), force_draft=force_draft)
         return run_pipeline(pipeline, case.input, harness=harness, case_id=case.id)
     finally:
         tracer.close()
@@ -172,6 +180,7 @@ def run_matrix(
     *,
     trace_dir: Optional[Path] = None,
     budget: Optional[Budget] = None,
+    force_draft: bool = False,
 ) -> tuple[List[CaseRun], List[PipelineSummary]]:
     """正常路径的对照实验。每条流水线的 trace 写进一个文件，按 case id 分 run_id。"""
     if trace_dir is not None:
@@ -190,6 +199,7 @@ def run_matrix(
                 trace_path=trace_path,
                 trace_run_id=case.id,
                 budget=budget,
+                force_draft=force_draft,
             )
             metrics = record.metrics or {}
             usage = record.usage or {}
@@ -233,6 +243,11 @@ def run_matrix(
             else:
                 summary.enough_cases += 1
                 summary.over_ask += 1 if asked else 0
+
+            intake = metrics.get("intake_sufficient")
+            if intake is not None:
+                summary.intake_judged += 1
+                summary.intake_sufficient_count += 1 if intake else 0
 
             if critique:
                 summary.critic_runs += 1
@@ -316,6 +331,7 @@ def run_fault_experiment(
     trace_dir: Optional[Path] = None,
     limit: int = 6,
     scenarios: Sequence[Dict[str, Any]] = FAULT_SCENARIOS,
+    force_draft: bool = False,
 ) -> List[FaultRow]:
     """同一批坏输出，分别喂给有审校和没审校的流水线。"""
     subset = [case for case in cases if not case.needs_followup][:limit]
@@ -340,6 +356,7 @@ def run_fault_experiment(
                     lambda: MockProvider(faults=[Fault(kind=kind, tag="writer", at_call=1, times=times)]),
                     trace_path=trace_path,
                     trace_run_id=case.id,
+                    force_draft=force_draft,
                 )
                 metrics = record.metrics or {}
                 critique = record.critique or {}

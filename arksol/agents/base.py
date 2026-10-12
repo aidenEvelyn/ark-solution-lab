@@ -14,7 +14,7 @@ from dataclasses import replace
 from typing import Any, Dict, Optional
 
 from arksol.budget import BudgetGuard, Meter
-from arksol.contracts import parse_contract
+from arksol.contracts import parse_contract, render_schema
 from arksol.errors import ContractError
 from arksol.llm.base import LLMRequest, Provider, render_user_prompt
 from arksol.state import RunState
@@ -63,7 +63,7 @@ class Agent:
     def build_request(self, state: RunState) -> LLMRequest:
         payload = self.payload(state)
         return LLMRequest(
-            system=self.system_prompt(),
+            system=self.system_prompt() + self._schema_block(),
             user=render_user_prompt(self.instruction(), payload),
             tag=self.tag,
             schema_name=self.schema_name,
@@ -72,6 +72,21 @@ class Agent:
             context=payload,
             temperature=self.temperature,
             max_tokens=self.max_tokens,
+        )
+
+    def _schema_block(self) -> str:
+        """把契约原文塞进系统提示词。
+
+        没有这一段，模型只能靠散文描述去猜字段名 —— 而猜错之后的重试是收敛不了的。
+        """
+        if not self.schema_name:
+            return ""
+        return (
+            "\n\n【输出格式 · 必须严格遵守】\n"
+            "你必须输出**且仅输出**一个 JSON 对象，不要写任何解释文字或 Markdown 围栏。\n"
+            "字段名、层级、必填项必须与下面的 JSON Schema 完全一致 —— "
+            "不要改名、不要增删字段；标注了 enum 的字段只能取列出的值。\n"
+            "```json\n" + render_schema(self.schema_name) + "\n```"
         )
 
     def _trace(self, **kwargs: Any) -> None:
@@ -106,7 +121,18 @@ class Agent:
             except ContractError as exc:
                 last_error = exc
                 state.record_attempt(stage=self.name, round=attempt, outcome="contract_error", reason=str(exc))
-                self._trace(event="contract_error", payload={"attempt": attempt, "error": str(exc)}, level="warn")
+                # **必须把模型的原始输出记下来**：否则「它为什么不符合契约」永远查不出来，
+                # 只能看到一个笼统的解析失败。截断是为了别让 trace 无限膨胀。
+                self._trace(
+                    event="contract_error",
+                    payload={
+                        "attempt": attempt,
+                        "error": str(exc),
+                        "raw_response": response.text[:4000],
+                        "raw_chars": len(response.text),
+                    },
+                    level="warn",
+                )
                 # 把失败原因写回提示词再试一次 —— 这是「本地重试」而不是「带病传递」
                 request = replace(
                     request,
