@@ -1,0 +1,269 @@
+"""评测台测试。
+
+重点保护两件事：
+1. 用例文件坏了要**明确报错**，不能静默跳过 —— 否则评测结果会建立在少跑了几条用例的基础上；
+2. 报告里那段「哪些数字有效」的声明**不能丢** —— 它是这个项目唯一可信的地方。
+"""
+
+from __future__ import annotations
+
+import csv
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from arksol.errors import ArksolError
+from arksol.evaluation import (
+    FAULT_SCENARIOS,
+    load_cases,
+    render_report,
+    run_fault_experiment,
+    run_matrix,
+    split_by_followup,
+    write_csv,
+    write_raw,
+)
+from arksol.evaluation.cases import default_cases_path
+from arksol.llm import MockProvider
+
+ROOT = Path(__file__).resolve().parent.parent
+CASES_PATH = ROOT / "evaluation" / "cases.jsonl"
+
+
+class TestCaseLoading(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.cases = load_cases(CASES_PATH)
+
+    def test_loads_expected_count(self) -> None:
+        self.assertEqual(len(self.cases), 20)
+
+    def test_ids_unique(self) -> None:
+        ids = [case.id for case in self.cases]
+        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_has_both_specified_and_underspecified(self) -> None:
+        enough, need_ask = split_by_followup(self.cases)
+        self.assertEqual(len(enough), 14)
+        self.assertEqual(len(need_ask), 6)
+
+    def test_every_case_has_note(self) -> None:
+        for case in self.cases:
+            self.assertTrue(case.note, f"{case.id} 没有写说明")
+
+    def test_default_path_is_discoverable(self) -> None:
+        found = default_cases_path()
+        self.assertIsNotNone(found)
+        self.assertTrue(found.exists())
+
+    def test_missing_file_raises(self) -> None:
+        with self.assertRaises(ArksolError):
+            load_cases(ROOT / "evaluation" / "不存在.jsonl")
+
+    def test_broken_json_line_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "cases.jsonl"
+            path.write_text('{"id": "C1", "input": "正常"}\n{坏行}\n', encoding="utf-8")
+            with self.assertRaises(ArksolError) as ctx:
+                load_cases(path)
+            self.assertIn("不是合法 JSON", str(ctx.exception))
+
+    def test_duplicate_id_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "cases.jsonl"
+            path.write_text(
+                '{"id": "C1", "input": "第一条"}\n{"id": "C1", "input": "第二条"}\n', encoding="utf-8"
+            )
+            with self.assertRaises(ArksolError) as ctx:
+                load_cases(path)
+            self.assertIn("id 重复", str(ctx.exception))
+
+    def test_missing_field_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "cases.jsonl"
+            path.write_text('{"id": "C1"}\n', encoding="utf-8")
+            with self.assertRaises(ArksolError) as ctx:
+                load_cases(path)
+            self.assertIn("input", str(ctx.exception))
+
+
+class TestRunMatrix(unittest.TestCase):
+    def setUp(self) -> None:
+        self.cases = load_cases(CASES_PATH)[:2]  # 只取两条，保持测试快
+        self._tmp = tempfile.TemporaryDirectory()
+        self.trace_dir = Path(self._tmp.name) / "traces"
+
+    def tearDown(self) -> None:
+        self._tmp.cleanup()
+
+    def test_matrix_shape(self) -> None:
+        runs, summaries = run_matrix(
+            self.cases, ["no-evidence", "evidence-once", "multi"], MockProvider, trace_dir=self.trace_dir
+        )
+        self.assertEqual(len(runs), 6)
+        self.assertEqual([s.pipeline for s in summaries], ["no-evidence", "evidence-once", "multi"])
+        for summary in summaries:
+            self.assertEqual(summary.cases, 2)
+            self.assertEqual(summary.ok, 2)
+
+    def test_trace_file_written_per_pipeline(self) -> None:
+        run_matrix(self.cases, ["multi"], MockProvider, trace_dir=self.trace_dir)
+        trace_file = self.trace_dir / "multi.jsonl"
+        self.assertTrue(trace_file.exists())
+        lines = [json.loads(line) for line in trace_file.read_text(encoding="utf-8").splitlines() if line.strip()]
+        run_ids = {line["run_id"] for line in lines}
+        self.assertEqual(run_ids, {case.id for case in self.cases})
+
+    def test_no_evidence_pipeline_has_unbacked_claims(self) -> None:
+        _runs, summaries = run_matrix(self.cases, ["no-evidence"], MockProvider, trace_dir=self.trace_dir)
+        self.assertGreater(summaries[0].unsupported_rate, 0.9)
+
+    def test_multi_costs_more_calls_than_evidence_once(self) -> None:
+        _runs, summaries = run_matrix(
+            self.cases, ["evidence-once", "multi"], MockProvider, trace_dir=self.trace_dir
+        )
+        by_name = {s.pipeline: s for s in summaries}
+        self.assertGreater(by_name["multi"].avg_calls, by_name["evidence-once"].avg_calls)
+        self.assertGreater(by_name["multi"].avg_tokens, by_name["evidence-once"].avg_tokens)
+
+    def test_summary_serialization(self) -> None:
+        _runs, summaries = run_matrix(self.cases, ["multi"], MockProvider, trace_dir=self.trace_dir)
+        payload = summaries[0].to_dict()
+        json.dumps(payload, ensure_ascii=False)
+        for key in ("unsupported_rate", "coverage_rate", "avg_calls", "success_rate"):
+            self.assertIn(key, payload)
+
+
+class TestFaultExperiment(unittest.TestCase):
+    def setUp(self) -> None:
+        self.cases = load_cases(CASES_PATH)[:2]
+        self._tmp = tempfile.TemporaryDirectory()
+        self.trace_dir = Path(self._tmp.name) / "traces"
+
+    def tearDown(self) -> None:
+        self._tmp.cleanup()
+
+    def test_row_shape(self) -> None:
+        rows = run_fault_experiment(
+            self.cases,
+            ["evidence-once", "multi"],
+            trace_dir=self.trace_dir,
+            limit=2,
+            scenarios=FAULT_SCENARIOS[:1],
+        )
+        self.assertEqual(len(rows), 2)
+        for row in rows:
+            self.assertEqual(row.runs, 2)
+
+    def test_critic_prevents_leakage_of_fabricated_citation(self) -> None:
+        rows = run_fault_experiment(
+            self.cases,
+            ["evidence-once", "multi"],
+            trace_dir=self.trace_dir,
+            limit=2,
+            scenarios=[FAULT_SCENARIOS[0]],  # 伪造引用（偶发）
+        )
+        by_pipeline = {row.pipeline: row for row in rows}
+        self.assertEqual(by_pipeline["evidence-once"].leaked, 2)  # 没有审校：全漏出去
+        self.assertEqual(by_pipeline["multi"].leaked, 0)  # 有审校：全部拦下
+
+    def test_persistent_fault_cannot_be_fixed(self) -> None:
+        rows = run_fault_experiment(
+            self.cases,
+            ["multi"],
+            trace_dir=self.trace_dir,
+            limit=1,
+            scenarios=[FAULT_SCENARIOS[1]],  # 忽略约束（持续）
+        )
+        row = rows[0]
+        self.assertEqual(row.caught, 1)  # 能发现
+        self.assertEqual(row.leaked, 1)  # 但改不动 —— 审校不是万能的
+        self.assertGreater(row.avg_rounds, 1)
+
+
+class TestReportRendering(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cases = load_cases(CASES_PATH)[:2]
+        with tempfile.TemporaryDirectory() as tmp:
+            trace_dir = Path(tmp) / "traces"
+            runs, summaries = run_matrix(
+                cases, ["no-evidence", "evidence-once", "multi"], MockProvider, trace_dir=trace_dir
+            )
+            fault_rows = run_fault_experiment(
+                cases, ["evidence-once", "multi"], trace_dir=trace_dir, limit=2, scenarios=FAULT_SCENARIOS[:1]
+            )
+        cls.runs = runs
+        cls.summaries = summaries
+        cls.fault_rows = fault_rows
+        cls.meta = {
+            "generated_at": "2026-10-12T00:00:00+08:00",
+            "provider": "mock",
+            "model": "mock-deterministic-v1",
+            "cases": 2,
+            "underspecified_cases": 0,
+            "pipelines": ["no-evidence", "evidence-once", "multi"],
+            "command": "python -m arksol eval --provider mock",
+        }
+        cls.report = render_report(summaries=summaries, fault_rows=fault_rows, meta=cls.meta)
+
+    def test_has_honesty_section(self) -> None:
+        self.assertIn("哪些数字有效", self.report)
+        self.assertIn("不能证明", self.report)
+
+    def test_mock_marks_quality_metrics_as_scripted(self) -> None:
+        self.assertIn("反映脚本设定", self.report)
+        self.assertIn("自证", self.report)
+
+    def test_has_three_tables(self) -> None:
+        self.assertIn("表 1", self.report)
+        self.assertIn("表 2", self.report)
+        self.assertIn("表 3", self.report)
+
+    def test_conclusions_are_data_driven(self) -> None:
+        self.assertIn("多智能体的开销是实打实的", self.report)
+        self.assertIn("故障路径", self.report)
+
+    def test_reproduce_commands_included(self) -> None:
+        self.assertIn("python -m arksol eval --provider mock", self.report)
+        self.assertIn("ARK_API_KEY", self.report)
+
+    def test_real_provider_report_switches_wording(self) -> None:
+        meta = dict(self.meta, provider="openai-compat", model="doubao-test")
+        report = render_report(summaries=self.summaries, fault_rows=self.fault_rows, meta=meta)
+        self.assertIn("doubao-test", report)
+        self.assertNotIn("反映脚本设定", report)
+        self.assertIn("不是账单", report)
+
+
+class TestOutputWriters(unittest.TestCase):
+    def test_csv_and_raw(self) -> None:
+        cases = load_cases(CASES_PATH)[:2]
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            runs, summaries = run_matrix(cases, ["multi"], MockProvider, trace_dir=out / "traces")
+            write_csv(out / "results.csv", runs)
+            write_raw(out / "raw.json", {"summaries": [s.to_dict() for s in summaries]})
+
+            with (out / "results.csv").open(encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(len(rows), 2)
+            self.assertEqual(rows[0]["pipeline"], "multi")
+            self.assertIn("claims_unsupported", rows[0])
+
+            payload = json.loads((out / "raw.json").read_text(encoding="utf-8"))
+            self.assertEqual(len(payload["summaries"]), 1)
+
+
+class TestFaultScenarioCatalogue(unittest.TestCase):
+    def test_scenarios_are_declared_with_description(self) -> None:
+        self.assertGreaterEqual(len(FAULT_SCENARIOS), 3)
+        for scenario in FAULT_SCENARIOS:
+            self.assertTrue(scenario["kind"])
+            self.assertTrue(scenario["label"])
+            self.assertTrue(scenario["desc"])
+
+
+if __name__ == "__main__":
+    unittest.main()

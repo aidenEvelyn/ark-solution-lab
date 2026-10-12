@@ -16,7 +16,7 @@ dist/
 
 # ---- 本地运行产物（不进仓库）----
 _过程/
-traces/
+/traces/
 .run/
 *.log
 .arksol-cache/

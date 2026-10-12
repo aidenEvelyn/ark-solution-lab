@@ -1,0 +1,136 @@
+{"ts": "2026-10-12T10:15:12.366+08:00", "run_id": "C01", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 298, "completion_tokens": 130}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.366+08:00", "run_id": "C01", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.367+08:00", "run_id": "C01", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1307, "completion_tokens": 308}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.367+08:00", "run_id": "C01", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.370+08:00", "run_id": "C02", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 298, "completion_tokens": 134}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.370+08:00", "run_id": "C02", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.371+08:00", "run_id": "C02", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1312, "completion_tokens": 309}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.371+08:00", "run_id": "C02", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.373+08:00", "run_id": "C03", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 298, "completion_tokens": 89}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.373+08:00", "run_id": "C03", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.373+08:00", "run_id": "C03", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1248, "completion_tokens": 299}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.373+08:00", "run_id": "C03", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.376+08:00", "run_id": "C04", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 291, "completion_tokens": 92}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.376+08:00", "run_id": "C04", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.376+08:00", "run_id": "C04", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1251, "completion_tokens": 278}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.376+08:00", "run_id": "C04", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.379+08:00", "run_id": "C05", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 291, "completion_tokens": 92}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.379+08:00", "run_id": "C05", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.379+08:00", "run_id": "C05", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1250, "completion_tokens": 282}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.379+08:00", "run_id": "C05", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.381+08:00", "run_id": "C06", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 296, "completion_tokens": 109}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.381+08:00", "run_id": "C06", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.382+08:00", "run_id": "C06", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1278, "completion_tokens": 302}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.382+08:00", "run_id": "C06", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.384+08:00", "run_id": "C07", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 294, "completion_tokens": 117}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.384+08:00", "run_id": "C07", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.385+08:00", "run_id": "C07", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1286, "completion_tokens": 289}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.385+08:00", "run_id": "C07", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.387+08:00", "run_id": "C08", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 294, "completion_tokens": 107}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.387+08:00", "run_id": "C08", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.388+08:00", "run_id": "C08", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1274, "completion_tokens": 305}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.388+08:00", "run_id": "C08", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.390+08:00", "run_id": "C09", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 289, "completion_tokens": 112}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.390+08:00", "run_id": "C09", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.391+08:00", "run_id": "C09", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1280, "completion_tokens": 284}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.391+08:00", "run_id": "C09", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.393+08:00", "run_id": "C10", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 291, "completion_tokens": 110}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.393+08:00", "run_id": "C10", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.393+08:00", "run_id": "C10", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1278, "completion_tokens": 302}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.393+08:00", "run_id": "C10", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.396+08:00", "run_id": "C11", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 293, "completion_tokens": 90}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.396+08:00", "run_id": "C11", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.397+08:00", "run_id": "C11", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1249, "completion_tokens": 300}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.397+08:00", "run_id": "C11", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.398+08:00", "run_id": "C12", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 290, "completion_tokens": 104}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.398+08:00", "run_id": "C12", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.399+08:00", "run_id": "C12", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1270, "completion_tokens": 301}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.399+08:00", "run_id": "C12", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.401+08:00", "run_id": "C13", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 291, "completion_tokens": 93}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.401+08:00", "run_id": "C13", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.402+08:00", "run_id": "C13", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1253, "completion_tokens": 298}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.402+08:00", "run_id": "C13", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.404+08:00", "run_id": "C14", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 290, "completion_tokens": 112}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.404+08:00", "run_id": "C14", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.404+08:00", "run_id": "C14", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1281, "completion_tokens": 281}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.405+08:00", "run_id": "C14", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.407+08:00", "run_id": "C15", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 270, "completion_tokens": 134}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.407+08:00", "run_id": "C15", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.410+08:00", "run_id": "C16", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 274, "completion_tokens": 138}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.410+08:00", "run_id": "C16", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.412+08:00", "run_id": "C17", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 274, "completion_tokens": 138}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.412+08:00", "run_id": "C17", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.414+08:00", "run_id": "C18", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 267, "completion_tokens": 137}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.414+08:00", "run_id": "C18", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.416+08:00", "run_id": "C19", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 267, "completion_tokens": 131}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.416+08:00", "run_id": "C19", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:15:12.418+08:00", "run_id": "C20", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 267, "completion_tokens": 131}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:15:12.418+08:00", "run_id": "C20", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.862+08:00", "run_id": "C01", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 298, "completion_tokens": 130}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.862+08:00", "run_id": "C01", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.862+08:00", "run_id": "C01", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1307, "completion_tokens": 308}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.862+08:00", "run_id": "C01", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.865+08:00", "run_id": "C02", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 298, "completion_tokens": 134}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.865+08:00", "run_id": "C02", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.865+08:00", "run_id": "C02", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1312, "completion_tokens": 309}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.865+08:00", "run_id": "C02", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.868+08:00", "run_id": "C03", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 298, "completion_tokens": 89}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.868+08:00", "run_id": "C03", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.868+08:00", "run_id": "C03", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1248, "completion_tokens": 299}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.868+08:00", "run_id": "C03", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.871+08:00", "run_id": "C04", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 291, "completion_tokens": 92}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.871+08:00", "run_id": "C04", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.871+08:00", "run_id": "C04", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1251, "completion_tokens": 278}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.871+08:00", "run_id": "C04", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.874+08:00", "run_id": "C05", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 291, "completion_tokens": 92}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.874+08:00", "run_id": "C05", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.874+08:00", "run_id": "C05", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1250, "completion_tokens": 282}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.874+08:00", "run_id": "C05", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.876+08:00", "run_id": "C06", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 296, "completion_tokens": 109}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.876+08:00", "run_id": "C06", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.877+08:00", "run_id": "C06", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1278, "completion_tokens": 302}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.877+08:00", "run_id": "C06", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.879+08:00", "run_id": "C07", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 294, "completion_tokens": 117}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.879+08:00", "run_id": "C07", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.879+08:00", "run_id": "C07", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1286, "completion_tokens": 289}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.879+08:00", "run_id": "C07", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.882+08:00", "run_id": "C08", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 294, "completion_tokens": 107}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.882+08:00", "run_id": "C08", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.882+08:00", "run_id": "C08", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1274, "completion_tokens": 305}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.882+08:00", "run_id": "C08", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.884+08:00", "run_id": "C09", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 289, "completion_tokens": 112}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.884+08:00", "run_id": "C09", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.885+08:00", "run_id": "C09", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1280, "completion_tokens": 284}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.885+08:00", "run_id": "C09", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.887+08:00", "run_id": "C10", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 291, "completion_tokens": 110}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.888+08:00", "run_id": "C10", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.888+08:00", "run_id": "C10", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1278, "completion_tokens": 302}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.888+08:00", "run_id": "C10", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.890+08:00", "run_id": "C11", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 293, "completion_tokens": 90}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.890+08:00", "run_id": "C11", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.890+08:00", "run_id": "C11", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1249, "completion_tokens": 300}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.891+08:00", "run_id": "C11", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.893+08:00", "run_id": "C12", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 290, "completion_tokens": 104}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.893+08:00", "run_id": "C12", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.893+08:00", "run_id": "C12", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1270, "completion_tokens": 301}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.893+08:00", "run_id": "C12", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.895+08:00", "run_id": "C13", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 291, "completion_tokens": 93}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.895+08:00", "run_id": "C13", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.896+08:00", "run_id": "C13", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1253, "completion_tokens": 298}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.896+08:00", "run_id": "C13", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.898+08:00", "run_id": "C14", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 290, "completion_tokens": 112}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.898+08:00", "run_id": "C14", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.899+08:00", "run_id": "C14", "agent": "writer", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "SolutionDraft"}, "usage": {"prompt_tokens": 1281, "completion_tokens": 281}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.899+08:00", "run_id": "C14", "agent": "writer", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.901+08:00", "run_id": "C15", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 270, "completion_tokens": 134}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.901+08:00", "run_id": "C15", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.904+08:00", "run_id": "C16", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 274, "completion_tokens": 138}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.904+08:00", "run_id": "C16", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.907+08:00", "run_id": "C17", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 274, "completion_tokens": 138}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.907+08:00", "run_id": "C17", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.909+08:00", "run_id": "C18", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 267, "completion_tokens": 137}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.909+08:00", "run_id": "C18", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.911+08:00", "run_id": "C19", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 267, "completion_tokens": 131}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.911+08:00", "run_id": "C19", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}
+{"ts": "2026-10-12T10:16:22.913+08:00", "run_id": "C20", "agent": "intake", "event": "call", "level": "info", "payload": {"attempt": 1, "fault": null, "schema": "Requirement"}, "usage": {"prompt_tokens": 267, "completion_tokens": 131}, "elapsed_ms": 0.0}
+{"ts": "2026-10-12T10:16:22.913+08:00", "run_id": "C20", "agent": "intake", "event": "contract_ok", "level": "info", "payload": {"attempt": 1}}

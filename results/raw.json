@@ -1,0 +1,2405 @@
+{
+  "meta": {
+    "generated_at": "2026-10-12T10:16:23+08:00",
+    "provider": "mock",
+    "model": "mock-deterministic-v1",
+    "cases": 20,
+    "underspecified_cases": 6,
+    "pipelines": [
+      "no-evidence",
+      "evidence-once",
+      "multi"
+    ],
+    "fault_pipelines": [
+      "evidence-once",
+      "multi"
+    ],
+    "command": "python -m arksol eval --provider mock --out results/",
+    "kb": {
+      "sources": 10,
+      "entries": 26,
+      "by_kind": {
+        "model": 9,
+        "error": 11,
+        "pattern": 6
+      },
+      "source_confidence": {
+        "中": 3,
+        "高": 5,
+        "低": 2
+      }
+    }
+  },
+  "summaries": [
+    {
+      "pipeline": "no-evidence",
+      "cases": 20,
+      "ok": 20,
+      "failed": 0,
+      "claims_total": 42,
+      "claims_unsupported": 42,
+      "claims_dangling": 0,
+      "judgeable": 25,
+      "missed": 0,
+      "followup_cases": 6,
+      "followup_hit": 6,
+      "enough_cases": 14,
+      "over_ask": 0,
+      "calls": 34,
+      "tokens": 16902,
+      "cost_cny": 0.0,
+      "latency_ms": 9.199999999999998,
+      "contract_errors": 0,
+      "rewrites": 0,
+      "critic_runs": 0,
+      "critic_pass": 0,
+      "success_rate": 1.0,
+      "unsupported_rate": 1.0,
+      "coverage_rate": 1.0,
+      "followup_hit_rate": 1.0,
+      "over_ask_rate": 0.0,
+      "avg_calls": 1.7,
+      "avg_tokens": 845.1,
+      "avg_cost_cny": 0.0,
+      "avg_latency_ms": 0.5
+    },
+    {
+      "pipeline": "evidence-once",
+      "cases": 20,
+      "ok": 20,
+      "failed": 0,
+      "claims_total": 42,
+      "claims_unsupported": 0,
+      "claims_dangling": 0,
+      "judgeable": 25,
+      "missed": 0,
+      "followup_cases": 6,
+      "followup_hit": 6,
+      "enough_cases": 14,
+      "over_ask": 0,
+      "calls": 34,
+      "tokens": 29978,
+      "cost_cny": 0.0,
+      "latency_ms": 13.400000000000002,
+      "contract_errors": 0,
+      "rewrites": 0,
+      "critic_runs": 0,
+      "critic_pass": 0,
+      "success_rate": 1.0,
+      "unsupported_rate": 0.0,
+      "coverage_rate": 1.0,
+      "followup_hit_rate": 1.0,
+      "over_ask_rate": 0.0,
+      "avg_calls": 1.7,
+      "avg_tokens": 1498.9,
+      "avg_cost_cny": 0.0,
+      "avg_latency_ms": 0.7
+    },
+    {
+      "pipeline": "multi",
+      "cases": 20,
+      "ok": 20,
+      "failed": 0,
+      "claims_total": 42,
+      "claims_unsupported": 0,
+      "claims_dangling": 0,
+      "judgeable": 25,
+      "missed": 0,
+      "followup_cases": 6,
+      "followup_hit": 6,
+      "enough_cases": 14,
+      "over_ask": 0,
+      "calls": 90,
+      "tokens": 91697,
+      "cost_cny": 0.0,
+      "latency_ms": 43.60000000000001,
+      "contract_errors": 0,
+      "rewrites": 0,
+      "critic_runs": 14,
+      "critic_pass": 14,
+      "success_rate": 1.0,
+      "unsupported_rate": 0.0,
+      "coverage_rate": 1.0,
+      "followup_hit_rate": 1.0,
+      "over_ask_rate": 0.0,
+      "avg_calls": 4.5,
+      "avg_tokens": 4584.9,
+      "avg_cost_cny": 0.0,
+      "avg_latency_ms": 2.2
+    }
+  ],
+  "runs": [
+    {
+      "case_id": "C01",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 3,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 737,
+        "completion_tokens": 365,
+        "total_tokens": 1102,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.8,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C02",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 3,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 742,
+        "completion_tokens": 370,
+        "total_tokens": 1112,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C03",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 678,
+        "completion_tokens": 315,
+        "total_tokens": 993,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C04",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 674,
+        "completion_tokens": 317,
+        "total_tokens": 991,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C05",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 673,
+        "completion_tokens": 319,
+        "total_tokens": 992,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C06",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 706,
+        "completion_tokens": 338,
+        "total_tokens": 1044,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C07",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 712,
+        "completion_tokens": 352,
+        "total_tokens": 1064,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C08",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 700,
+        "completion_tokens": 340,
+        "total_tokens": 1040,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.7,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C09",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 701,
+        "completion_tokens": 342,
+        "total_tokens": 1043,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.9,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C10",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 701,
+        "completion_tokens": 339,
+        "total_tokens": 1040,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C11",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 674,
+        "completion_tokens": 317,
+        "total_tokens": 991,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C12",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 692,
+        "completion_tokens": 333,
+        "total_tokens": 1025,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C13",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 676,
+        "completion_tokens": 318,
+        "total_tokens": 994,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C14",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 3,
+        "claims_dangling": 0,
+        "unsupported_rate": 1.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 703,
+        "completion_tokens": 340,
+        "total_tokens": 1043,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "plan_from_memory": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.5,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C15",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 270,
+        "completion_tokens": 134,
+        "total_tokens": 404,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C16",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 274,
+        "completion_tokens": 138,
+        "total_tokens": 412,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C17",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 274,
+        "completion_tokens": 138,
+        "total_tokens": 412,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C18",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 267,
+        "completion_tokens": 137,
+        "total_tokens": 404,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.3,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C19",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 267,
+        "completion_tokens": 131,
+        "total_tokens": 398,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C20",
+      "pipeline": "no-evidence",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 267,
+        "completion_tokens": 131,
+        "total_tokens": 398,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C01",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 3,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1605,
+        "completion_tokens": 438,
+        "total_tokens": 2043,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.9,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C02",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 3,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1610,
+        "completion_tokens": 443,
+        "total_tokens": 2053,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.9,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C03",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1546,
+        "completion_tokens": 388,
+        "total_tokens": 1934,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.8,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C04",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1542,
+        "completion_tokens": 370,
+        "total_tokens": 1912,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.9,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C05",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1541,
+        "completion_tokens": 374,
+        "total_tokens": 1915,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.9,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C06",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1574,
+        "completion_tokens": 411,
+        "total_tokens": 1985,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.8,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C07",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1580,
+        "completion_tokens": 406,
+        "total_tokens": 1986,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.8,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C08",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1568,
+        "completion_tokens": 412,
+        "total_tokens": 1980,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.8,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C09",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1569,
+        "completion_tokens": 396,
+        "total_tokens": 1965,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 1.1,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C10",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1569,
+        "completion_tokens": 412,
+        "total_tokens": 1981,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.8,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C11",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1542,
+        "completion_tokens": 390,
+        "total_tokens": 1932,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.8,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C12",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1560,
+        "completion_tokens": 405,
+        "total_tokens": 1965,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.8,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C13",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1544,
+        "completion_tokens": 391,
+        "total_tokens": 1935,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.9,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C14",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 2,
+        "prompt_tokens": 1571,
+        "completion_tokens": 393,
+        "total_tokens": 1964,
+        "cost_cny": 0.0,
+        "estimated_calls": 2,
+        "by_agent": {
+          "intake": 1,
+          "writer": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.8,
+      "rounds": 0,
+      "evidence_count": 5,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C15",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 270,
+        "completion_tokens": 134,
+        "total_tokens": 404,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C16",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 274,
+        "completion_tokens": 138,
+        "total_tokens": 412,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C17",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 274,
+        "completion_tokens": 138,
+        "total_tokens": 412,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.3,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C18",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 267,
+        "completion_tokens": 137,
+        "total_tokens": 404,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C19",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 267,
+        "completion_tokens": 131,
+        "total_tokens": 398,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C20",
+      "pipeline": "evidence-once",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 267,
+        "completion_tokens": 131,
+        "total_tokens": 398,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.3,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C01",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 3,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5358,
+        "completion_tokens": 1140,
+        "total_tokens": 6498,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.4,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C02",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 3,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5363,
+        "completion_tokens": 1144,
+        "total_tokens": 6507,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.1,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C03",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5234,
+        "completion_tokens": 1089,
+        "total_tokens": 6323,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.0,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C04",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5212,
+        "completion_tokens": 1072,
+        "total_tokens": 6284,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 2.9,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C05",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5215,
+        "completion_tokens": 1075,
+        "total_tokens": 6290,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 2.9,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C06",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5292,
+        "completion_tokens": 1112,
+        "total_tokens": 6404,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.0,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C07",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5289,
+        "completion_tokens": 1107,
+        "total_tokens": 6396,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.1,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C08",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5289,
+        "completion_tokens": 1113,
+        "total_tokens": 6402,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.0,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C09",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5274,
+        "completion_tokens": 1097,
+        "total_tokens": 6371,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.1,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C10",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5288,
+        "completion_tokens": 1113,
+        "total_tokens": 6401,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.0,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C11",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5229,
+        "completion_tokens": 1091,
+        "total_tokens": 6320,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.0,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C12",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5278,
+        "completion_tokens": 1106,
+        "total_tokens": 6384,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 3.0,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C13",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 1,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5230,
+        "completion_tokens": 1092,
+        "total_tokens": 6322,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 2.9,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C14",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": false,
+      "metrics": {
+        "claims_total": 3,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 2,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": false
+      },
+      "usage": {
+        "calls": 6,
+        "prompt_tokens": 5272,
+        "completion_tokens": 1095,
+        "total_tokens": 6367,
+        "cost_cny": 0.0,
+        "estimated_calls": 6,
+        "by_agent": {
+          "intake": 1,
+          "evidence:模型选型": 1,
+          "evidence:限制与合规": 1,
+          "evidence:计费与性能": 1,
+          "writer": 1,
+          "critic": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 2.9,
+      "rounds": 1,
+      "evidence_count": 9,
+      "critique_verdict": "pass",
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C15",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 270,
+        "completion_tokens": 134,
+        "total_tokens": 404,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C16",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 274,
+        "completion_tokens": 138,
+        "total_tokens": 412,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C17",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 274,
+        "completion_tokens": 138,
+        "total_tokens": 412,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C18",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 267,
+        "completion_tokens": 137,
+        "total_tokens": 404,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.3,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C19",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 267,
+        "completion_tokens": 131,
+        "total_tokens": 398,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    },
+    {
+      "case_id": "C20",
+      "pipeline": "multi",
+      "ok": true,
+      "needs_followup": true,
+      "metrics": {
+        "claims_total": 0,
+        "claims_unsupported": 0,
+        "claims_dangling": 0,
+        "unsupported_rate": 0.0,
+        "constraints_judgeable": 0,
+        "constraints_missed": 0,
+        "coverage_rate": 1.0,
+        "followup_asked": true
+      },
+      "usage": {
+        "calls": 1,
+        "prompt_tokens": 267,
+        "completion_tokens": 131,
+        "total_tokens": 398,
+        "cost_cny": 0.0,
+        "estimated_calls": 1,
+        "by_agent": {
+          "intake": 1
+        },
+        "errors": []
+      },
+      "elapsed_ms": 0.2,
+      "rounds": 0,
+      "evidence_count": 0,
+      "critique_verdict": null,
+      "error": null,
+      "stop_reason": null,
+      "contract_errors": 0
+    }
+  ],
+  "fault_rows": [
+    {
+      "scenario": "伪造引用（偶发：只坏第一次）",
+      "pipeline": "evidence-once",
+      "runs": 6,
+      "caught": 0,
+      "leaked": 6,
+      "failed": 0,
+      "rounds_total": 6,
+      "caught_rate": 0.0,
+      "leaked_rate": 1.0,
+      "avg_rounds": 1.0
+    },
+    {
+      "scenario": "伪造引用（偶发：只坏第一次）",
+      "pipeline": "multi",
+      "runs": 6,
+      "caught": 6,
+      "leaked": 0,
+      "failed": 0,
+      "rounds_total": 12,
+      "caught_rate": 1.0,
+      "leaked_rate": 0.0,
+      "avg_rounds": 2.0
+    },
+    {
+      "scenario": "忽略客户约束（持续：一直坏）",
+      "pipeline": "evidence-once",
+      "runs": 6,
+      "caught": 0,
+      "leaked": 6,
+      "failed": 0,
+      "rounds_total": 6,
+      "caught_rate": 0.0,
+      "leaked_rate": 1.0,
+      "avg_rounds": 1.0
+    },
+    {
+      "scenario": "忽略客户约束（持续：一直坏）",
+      "pipeline": "multi",
+      "runs": 6,
+      "caught": 6,
+      "leaked": 6,
+      "failed": 0,
+      "rounds_total": 18,
+      "caught_rate": 1.0,
+      "leaked_rate": 1.0,
+      "avg_rounds": 3.0
+    },
+    {
+      "scenario": "输出不是合法 JSON（偶发）",
+      "pipeline": "evidence-once",
+      "runs": 6,
+      "caught": 0,
+      "leaked": 0,
+      "failed": 0,
+      "rounds_total": 6,
+      "caught_rate": 0.0,
+      "leaked_rate": 0.0,
+      "avg_rounds": 1.0
+    },
+    {
+      "scenario": "输出不是合法 JSON（偶发）",
+      "pipeline": "multi",
+      "runs": 6,
+      "caught": 0,
+      "leaked": 0,
+      "failed": 0,
+      "rounds_total": 6,
+      "caught_rate": 0.0,
+      "leaked_rate": 0.0,
+      "avg_rounds": 1.0
+    }
+  ]
+}

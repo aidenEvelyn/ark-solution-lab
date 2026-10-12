@@ -17,13 +17,24 @@ from typing import Optional, Sequence, Tuple
 from arksol import __version__
 from arksol.budget import Budget
 from arksol.errors import ArksolError, ProviderError
+from arksol.evaluation import (
+    default_cases_path,
+    load_cases,
+    render_report,
+    run_fault_experiment,
+    run_matrix,
+    utc_stamp,
+    write_csv,
+    write_raw,
+)
+from arksol.kb import load_default_kb
 from arksol.llm import PROVIDER_NAMES, get_provider
 from arksol.pipeline import PIPELINE_NAMES, Harness, RunRecord, run_pipeline
 from arksol.tools.cost import format_cny
 from arksol.trace import Tracer
 
 DEMO_INPUT = "我们想做个内部知识库问答，给客服团队用，但数据不能出内网，QPS 大概 50，预算每月两千左右。"
-DEFAULT_CASES = "eval/cases.jsonl"
+DEFAULT_CASES = "evaluation/cases.jsonl"
 DEFAULT_TRACE_DIR = "traces"
 
 
@@ -64,6 +75,20 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 # --------------------------------------------------------------------------------------
+
+
+def resolve_cases_path(given: str) -> str:
+    """用例文件：显式给了就用给的；否则从当前目录往上找 evaluation/cases.jsonl。
+
+    这样在仓库任意子目录下运行都能找到，而不是只认当前工作目录。
+    """
+    path = Path(given)
+    if path.exists():
+        return str(path)
+    discovered = default_cases_path()
+    if discovered is not None:
+        return str(discovered)
+    return given
 
 
 def load_case(path: str, case_id: str) -> Tuple[str, str]:
@@ -180,6 +205,81 @@ def _cmd_run(args: argparse.Namespace) -> int:
     return 0 if record.ok else 1
 
 
+def _cmd_eval(args: argparse.Namespace) -> int:
+    cases_path = resolve_cases_path(args.cases)
+    cases = load_cases(cases_path)
+    pipelines = [name.strip() for name in args.pipelines.split(",") if name.strip()]
+    unknown = [name for name in pipelines if name not in PIPELINE_NAMES]
+    if unknown:
+        raise ArksolError(f"未知的流水线 {unknown}，可选：{PIPELINE_NAMES}")
+    if not pipelines:
+        raise ArksolError("至少要指定一条流水线")
+
+    out_dir = Path(args.out)
+    trace_dir = out_dir / "traces"
+
+    # 先建一次 provider：缺 key 就在**跑之前**报错，而不是跑到一半才发现
+    probe = get_provider(args.provider)
+    is_mock = args.provider == "mock"
+
+    print(f"[arksol] 用例 {len(cases)} 条 × 流水线 {len(pipelines)} 条 = {len(cases) * len(pipelines)} 次运行")
+    if not is_mock:
+        print(f"[arksol] ⚠️ 使用真实模型 {getattr(probe, 'model', '?')}，会消耗你的额度。按 Ctrl+C 可中断。")
+    print(f"[arksol] 输出目录：{out_dir.resolve()}\n")
+
+    runs, summaries = run_matrix(
+        cases,
+        pipelines,
+        lambda: get_provider(args.provider),
+        trace_dir=trace_dir,
+    )
+
+    # 故障注入固定比较这两条：一条有审校、一条没有 —— 只有这样才能把功劳归因清楚
+    fault_pipelines = [name for name in ("evidence-once", "multi")]
+    fault_rows = run_fault_experiment(cases, fault_pipelines, trace_dir=trace_dir)
+
+    kb_stats = load_default_kb().stats()
+    meta = {
+        "generated_at": utc_stamp(),
+        "provider": args.provider,
+        "model": getattr(probe, "model", "?"),
+        "cases": len(cases),
+        "underspecified_cases": sum(1 for case in cases if case.needs_followup),
+        "pipelines": pipelines,
+        "fault_pipelines": fault_pipelines,
+        "command": f"python -m arksol eval --provider {args.provider} --out {args.out}",
+        "kb": kb_stats,
+    }
+
+    report = render_report(summaries=summaries, fault_rows=fault_rows, meta=meta)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "report.md").write_text(report, encoding="utf-8", newline="\n")
+    write_csv(out_dir / "results.csv", runs)
+    write_raw(
+        out_dir / "raw.json",
+        {"meta": meta, "summaries": [s.to_dict() for s in summaries], "runs": [r.to_dict() for r in runs],
+         "fault_rows": [row.to_dict() for row in fault_rows]},
+    )
+
+    # 终端上给一张简表，细节去 report.md
+    print(f"{'流水线':<16}{'成功率':>8}{'无依据断言':>14}{'约束覆盖':>10}{'平均调用':>10}{'平均tokens':>12}")
+    for summary in summaries:
+        print(
+            f"{summary.pipeline:<16}{summary.success_rate:>7.0%}"
+            f"{summary.unsupported_rate:>13.0%}{summary.coverage_rate:>10.0%}"
+            f"{summary.avg_calls:>10.1f}{summary.avg_tokens:>12.0f}"
+        )
+    print("\n故障注入（坏输出能不能流到最终产物）：")
+    for row in fault_rows:
+        print(f"  {row.scenario} × {row.pipeline}: 仍流入产物 {row.leaked}/{row.runs}")
+
+    print("\n产出：")
+    for name in ("report.md", "results.csv", "raw.json"):
+        print(f"  {out_dir / name}")
+    print(f"  {trace_dir}\\（每条流水线一个 JSONL，含每一步的输入输出与耗时）")
+    return 0
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -188,13 +288,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         parser.print_help()
         return 0
 
-    if args.command == "eval":
-        print("[arksol] eval 子命令尚未实现（见 README 的施工状态）。")
-        return 3
-
     try:
         if args.command == "demo":
             return _cmd_demo(args)
+        if args.command == "eval":
+            return _cmd_eval(args)
         return _cmd_run(args)
     except ProviderError as exc:
         print(f"[arksol] 模型提供方错误：{exc}", file=sys.stderr)

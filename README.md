@@ -3,7 +3,42 @@
 > 客户一句话需求 → **带证据的技术方案草稿 + 追问清单 + 成本报告**；
 > 并且用一个可复现的对照实验回答一个问题：**这个场景到底该不该上多智能体。**
 
-**状态：🚧 施工中**（第 1/7 步完成：骨架与设计文档）
+**状态**：核心代码与对照实验已完成 —— 235 个单元测试全绿，核心管线**零第三方依赖**。
+
+---
+
+## 结论先行
+
+三条流水线跑**同一批 20 条客户需求**（`python -m arksol eval` 产出，完整报告在 [`results/report.md`](results/report.md)）：
+
+| 流水线 | 平均调用 | 平均 tokens | 无依据断言率 | 约束覆盖 |
+|---|---|---|---|---|
+| `no-evidence` 不看知识库，一次出方案 | 1.7 | 845 | **100%**（42/42 条） | 100% |
+| `evidence-once` 检索一次，一次出方案 | 1.7 | 1,499 | **0%** | 100% |
+| `multi` 多智能体（并行取证 + 审校） | **4.5** | **4,585** | **0%** | 100% |
+
+**三句话：**
+
+1. **真正治好「编造」的是检索，不是编排。** 给它证据，无依据断言率从 100% 掉到 0；而调用次数一次都没多。
+2. **多智能体在正常路径上更贵而没有更好。** 3.1 倍 token、2.6 倍调用，质量指标一模一样 —— 这和 Anthropic、Cognition 公开的工程复盘一致：**编排本身不产生正确性，它只在故障路径上产生价值。**
+3. **故障路径上它确实值这个钱，但审校不是万能的**（见下表）。
+
+同一个坏输出，分别喂给有审校和没审校的流水线：
+
+| 注入的故障 | `evidence-once` 仍流入产物 | `multi` 仍流入产物 |
+|---|---|---|
+| 伪造引用（**偶发**，只坏第一次） | **6/6** | **0/6** ← 被审校拦下并改写 |
+| 忽略客户约束（**持续**，一直坏） | 6/6 | **6/6** ← 能发现，但改不动 |
+| 输出不是合法 JSON（偶发） | 0/6 | 0/6 ← 契约层本地重试就吸收了，用不着编排 |
+
+> ⚠️ **这份数字在什么条件下成立，必须一起读：**
+>
+> 上面这次运行用的是 `mock` 提供方 —— 它**不是模型**，是一段确定性规则脚本。所以：
+> **调用次数、token、成本、契约合规、重试、熔断、故障拦截率是有效数字**（只取决于管线结构，与模型无关）；
+> **无依据断言率、约束覆盖率、追问命中率在 mock 下反映的是脚本设定，不是模型行为**；延迟无意义。
+>
+> 用例是自建的 20 条、规模很小，**不是行业基准**。要得到有解释力的质量数字，请用真实模型重跑（见文末）。
+> 完整的适用边界、指标口径与打假条件写在 [`docs/EVALUATION.md`](docs/EVALUATION.md)。
 
 ---
 
@@ -13,17 +48,13 @@
 
 > 「我们想做个内部知识库问答，但数据不能出内网，QPS 大概 50，预算每月两千。」
 
-售前要做的第一件事，是把它变成一份**能落地的技术方案**：选哪个模型、怎么调、有哪些限制、大概多少钱、哪些地方客户没说清楚需要追问。
+售前要做的第一件事，是把它变成一份**能落地的技术方案**。这件事有三个真实的痛点：
 
-这件事有三个真实的痛点：
-
-1. **模型会编。** 方案里写「这个模型支持 128k 上下文」——是真的还是编的？售前把它发出去，就是在拿公司信誉背书。
-2. **客户约束会漏。** 客户说了「数据不出内网」，方案里通篇没提私有化——这种漏项在 PoC 阶段才发现，代价很高。
+1. **模型会编。** 方案里写「这个模型支持 128k 上下文」——是真的还是编的？售前把它发出去，就是拿公司信誉背书。
+2. **客户约束会漏。** 客户说了「数据不出内网」，方案通篇没提私有化 —— PoC 阶段才发现，返工代价极高。
 3. **需求常常是欠规格的。** 该追问的时候硬着头皮出方案，后面全是返工。
 
-这个项目把这三件事做成可测的环节，然后回答一个更根本的问题：
-
-> **要解决它，到底需要几个 agent？多智能体比单 Agent 强在哪、贵在哪、什么情况下不值？**
+这个项目把这三件事做成**可测的环节**，并回答一个更根本的问题：**要解决它，到底需要几个 agent。**
 
 ---
 
@@ -35,8 +66,8 @@
                                ▼
                     ┌──────────────────────┐
                     │  Intake · 需求理解    │  单线程
-                    │  抽结构化需求 +       │  （信息不足时直接出追问清单，
-                    │  列「未明确的点」      │    不硬编方案）
+                    │  抽结构化需求 +       │  信息不足 → 只出追问清单，
+                    │  列出「未明确的点」    │  不硬编方案
                     └──────────┬───────────┘
                                │  结构化 Requirement（过契约校验）
                                ▼
@@ -44,49 +75,32 @@
           ▼                    ▼                    ▼
    ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
    │ Evidence #1 │      │ Evidence #2 │      │ Evidence #3 │   并行 · 只读
-   │ 模型选型     │      │ 限制与合规   │      │ 成本与性能   │   各自检索知识库，
+   │ 模型选型     │      │ 限制与合规   │      │ 计费与性能   │   各自检索知识库，
    └──────┬──────┘      └──────┬──────┘      └──────┬──────┘   互不写入
           └────────────────────┼────────────────────┘
-                               │  证据包（每条带来源）
+                               │  证据表（id 由管线统一分配）
                                ▼
                     ┌──────────────────────┐
                     │  Writer · 方案撰写    │  单线程
-                    │  每条技术断言必须挂   │  （唯一允许「写入」的环节）
+                    │  每条技术断言必须挂   │  全系统唯一允许「写入」的环节
                     │  到一条证据上         │
                     └──────────┬───────────┘
                                │  方案草稿 + 引用表
                                ▼
                     ┌──────────────────────┐
-                    │  Critic · 独立审校    │  逐条核对：
-                    │  不合格 → 退回重写    │  ① 有没有无依据的断言
-                    │  （最多 2 轮）        │  ② 客户约束有没有被回应
+                    │  Critic · 独立审校    │  规则层（确定性）+ 模型层
+                    │  不合格 → 退回重写    │  规则判负就不再花模型调用
+                    │  （最多 2 轮）        │
                     └──────────┬───────────┘
                                ▼
-              方案草稿 + 证据表 + 追问清单 + 成本/延迟报告
+           方案草稿 + 证据表 + 追问清单 + 成本/延迟报告
 ```
 
-**为什么这么拆**（依据在 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)，每条都带出处）：
+**为什么这么拆**（每条都带出处，见 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)）：
 
 - 只在**只读、可并行**的取证环节用多个 agent —— 这是目前有实证支持的多智能体适用区间
-- **写入保持单线程** —— Cognition 的工程结论：并行 agent 各自携带的隐含决策会互相冲突，产出不一致的结果
+- **写入保持单线程** —— 并行 agent 各自携带的隐含决策会互相冲突，产出不一致的结果
 - 审校**独立**于撰写 —— 自己检查自己，等于没检查
-
----
-
-## 对照实验（本仓库的重点）
-
-同一批测试用例，跑三条流水线，用同一套指标打分：
-
-| 流水线 | 是什么 | 想回答的问题 |
-|---|---|---|
-| **A · 单 Agent 一把梭** | 一个 prompt，直接出方案 | 最省事的做法差在哪 |
-| **B · 单 Agent + 结构化自检** | 强制 JSON 输出 + 让它自查一遍 | **便宜的改良能不能顶替多智能体** |
-| **C · 多智能体（上图）** | 并行取证 + 单线程写 + 独立审校 | 多花的钱买到了什么 |
-
-指标：无依据断言率 · 客户约束覆盖率 · 契约合规率 · 该追问时是否追问 · 单次成本（元）· 单次延迟。
-
-> ⚠️ **诚实声明**：测试用例是自建的、样本量小（约 20 条），结论只在**这个设定下**成立，不是行业基准。
-> 详细的口径、打假条件与局限见 [`docs/EVALUATION.md`](docs/EVALUATION.md)。
 
 ---
 
@@ -96,20 +110,25 @@
 git clone <this-repo>
 cd ark-solution-lab
 
-# 零依赖：核心管线只用 Python 标准库
-python -m arksol demo --provider mock
+# 核心管线零第三方依赖，clone 下来直接能跑
+python -m arksol demo                        # 跑一条样例，看完整链路
+python -m arksol demo --pipeline no-evidence # 换一条流水线对比
+python -m arksol run --input "我们想做个合同审核助手，每天 500 份，预算有限"
 
 # 跑完整对照实验并生成报告
 python -m arksol eval --provider mock --out results/
+
+# 自测
+python -m unittest discover -s tests -t .
 ```
 
-想接真实模型（默认支持任何 OpenAI 兼容端点，含火山方舟/豆包）：
+想接真实模型（默认支持任何 OpenAI 兼容端点，含火山方舟 / 豆包）。**密钥只走环境变量，绝不写进代码**：
 
 ```bash
-# 只走环境变量，绝不写进代码
-export ARK_API_KEY=...
+export ARK_API_KEY=...                                   # 不要在仓库里留任何 key
 export ARK_BASE_URL=https://ark.cn-beijing.volces.com/api/v3
 export ARK_MODEL=doubao-seed-2-1-turbo-260628
+export ARK_PRICE_IN=3 ARK_PRICE_OUT=15                   # 元/百万 tokens，用于成本换算
 python -m arksol eval --provider openai-compat --out results/ark/
 ```
 
@@ -117,33 +136,42 @@ python -m arksol eval --provider openai-compat --out results/ark/
 
 ```
 ark-solution-lab/
-├─ arksol/            核心包（零第三方依赖）
-│  ├─ agents/         四个角色：intake / evidence / writer / critic
-│  ├─ pipeline/       三条对照流水线：single / single_guarded / multi
-│  ├─ llm/            Provider 抽象：mock（可注入故障）/ openai-compat
-│  ├─ tools/          检索、成本换算
-│  └─ kb/             示例知识库（每条标来源 URL + 读取日期）
-├─ eval/              测试用例与评分口径
-├─ tests/             unittest（标准库，无需 pytest）
-├─ results/           跑分产物（README 里的数字都在这里复现）
-└─ docs/              架构、选型取舍、评测方法
+├─ arksol/                核心包（零第三方依赖）
+│  ├─ agents/             四个角色：intake / evidence / writer / critic
+│  ├─ pipeline/           三条对照流水线 + 检索、指标、运行记录
+│  ├─ evaluation/         评测台：用例加载、实验执行、报告渲染
+│  ├─ llm/                Provider：mock（可注入故障）/ openai-compat
+│  ├─ kb/                 示例知识库（26 条，每条标来源 URL + 读取日期 + 可信度）
+│  ├─ contracts.py        交接契约 + 最小 schema 校验器
+│  ├─ verify.py           独立审计器（三条流水线共用同一把尺子）
+│  ├─ budget.py           三重预算上限 + 重复动作熔断 + 计量
+│  ├─ state.py            外置状态 + 交接单
+│  └─ trace.py            JSONL 全链路 trace
+├─ evaluation/cases.jsonl 20 条用例（含 6 条故意欠规格的）
+├─ results/               跑分产物：report.md / results.csv / raw.json / traces/
+├─ tests/                 235 个用例，标准库 unittest
+└─ docs/                  架构、取舍、评测方法
 ```
 
 ## 文档
 
 | 文档 | 看什么 |
 |---|---|
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | 架构、以及**为什么这么拆**（带出处） |
-| [`docs/TRADEOFFS.md`](docs/TRADEOFFS.md) | 逐条选型取舍：我否掉了什么、为什么 |
-| [`docs/EVALUATION.md`](docs/EVALUATION.md) | 指标定义、口径、局限与打假条件 |
-| [`docs/大白话讲解.md`](docs/大白话讲解.md) | 零术语版本（第 7 步交付） |
+| [`results/report.md`](results/report.md) | **实验报告**：三张表 + 适用边界 |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | 架构、**为什么这么拆**（带出处）、6 条已知局限 |
+| [`docs/TRADEOFFS.md`](docs/TRADEOFFS.md) | 逐条选型取舍：**我否掉了什么、代价是什么** |
+| [`docs/EVALUATION.md`](docs/EVALUATION.md) | 指标定义、口径、反作弊说明与打假条件 |
+| [`docs/大白话讲解.md`](docs/大白话讲解.md) | 零术语版本 |
+| [`docs/面试怎么讲.md`](docs/面试怎么讲.md) | 3 分钟讲述稿 + 追问清单 |
 
 ## 设计时参考的证据
 
 - Anthropic · [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)：多智能体约用 15× token；只在可高度并行、信息超出单窗口的任务上有明确收益
-- Cognition · [Don't Build Multi-Agents](https://cognition.com/blog/dont-build-multi-agents) / [一年后复盘](https://cognition.com/blog/multi-agents-working)：写入保持单线程；无结构 swarm 是干扰项
-- MAST · [Why Do Multi-Agent LLM Systems Fail?](https://arxiv.org/abs/2503.13657)：150–200+ 条轨迹归纳 14 种失败模式 / 3 大类
+- Cognition · [Don't Build Multi-Agents](https://cognition.com/blog/dont-build-multi-agents) ｜ [一年后复盘](https://cognition.com/blog/multi-agents-working)：写入保持单线程；无结构 swarm 是干扰项
+- MAST · [Why Do Multi-Agent LLM Systems Fail?](https://arxiv.org/abs/2503.13657)：150–200+ 条轨迹归纳 14 种失败模式 / 3 大类，其中规格问题占 41.77%
 
-## License
+## 边界与免责
 
-MIT
+- 知识库是**演示用的**，不是官方文档的替代品。每条都标了来源 URL 与读取日期，但**可能有错、可能过期**；接真实业务前必须回原页核对。
+- 所有产出都是**草稿**，不自动发给客户 —— 涉及对外承诺的动作不该自动化。
+- License: MIT
